@@ -5,6 +5,7 @@
 ## This script creates array jobs that can be submitted to the Sun Grid Engine on Apocrita
 ## This script has been written by Findlay Bewicke-Copley August 2018
 
+SuppScirptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"/SupplementaryScripts/
 today=`date +%Y-%m-%d`
 DIR=$PWD
 jobName=UMI-VCF-$(basename $DIR)
@@ -415,8 +416,8 @@ PICARD=$PICARD
 
 reference=$reference
 referenceindex=$refIndex
-dbsnp=$dbsnp" > $realignJob
-
+dbsnp=$dbsnp
+BED=$BED" > $realignJob
 
 echo '
 module load java
@@ -484,6 +485,8 @@ date
 
 if ! [[ $? -eq 0 ]]; then exit 1; fi
 
+$SuppScirptDir/get_coverage_targeted_regions.sh $BED
+perl $SuppScirptDir/get_coverage_info.pl $BED
 ' >> $realignJob
 
 echo "
@@ -567,7 +570,7 @@ echo "
 #$ -l h_rt=24:0:0        # Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
 #$ -l h_vmem=4G         # Request 4G RAM / Core
 #$ -N $jobName-Varscan_Job
-" > $varFiltJob
+SuppScirptDir=$SuppScirptDir" > $varFiltJob
 
 echo '
 # Combine the first 8 columns, remove duplicates ignoring the 8th column and store in Combined.Unique.vcf
@@ -600,7 +603,7 @@ table_annovar.pl $VARIANTS/Annotation.filter.hg19_esp6500siv2_all_filtered $Refs
 # check lines against varscan output (filtered for "PASS")
 # if variant found copy the line to the file with the annotations.
 cd $VARIANTS # TODO make it so this doesnt need to be run in the directory.
-python /data/hfx472/Software/get_mutation_info.py
+python $SuppScirptDir/get_mutation_info.py
 
 # filter out all non exonic/splicing variants
 grep "exonic\|splicing" get_mutation_info.out.txt | sort -V > Variants.exon.filter.txt
@@ -622,7 +625,7 @@ if [[ $? -eq 0 ]]; then
 	rm Variants.exon.filter.txt Variants.intron.filter.txt
 fi
 
-Rscript /data/hfx472/Software/MyScripts/VariantCalling/VariantFix.r
+Rscript $SuppScirptDir/VariantFix.r
 ' >> $varFiltJob
 
 if [[ $AUTOSTART -eq 1 ]]; then
