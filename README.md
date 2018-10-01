@@ -45,6 +45,24 @@ If the script is set to autorun then it will load the SAI arrays straight away, 
 
 UMI-VCF_Pipline_Array_Build.sh
 
+This script will run a UMI based alignment and realignment around indels. This was written by Findlay Bewicke-Copley based on pipelines used by Nonacus and those developed by Jun Wang.
+
+### Prerequisites
+
+There is a slight difference in the folder set up for this pipeline, it assumes all the files are stored in FASTQ_Raw and it's first step is to concatenate all the lanes together and store all the fastq files in sample directories.
+
+i.e. the data will start like this:
+
+Project root | raw  | .fastq.gz 
+--- | --- | ---
+WGS_60X | FASTQ_Raw | Sample1_R1.fastq.gz
+|  |  | Sample1_R2.fastq.gz
+|  |  | Sample1_R3.fastq.gz
+|  |  | Sample1_I1.fastq.gz
+|  |  | Sample1_I2.fastq.gz
+
+And end up looking like this:
+
 Project root | raw | sample | .fastq.gz 
 --- | --- | --- | ---
 WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
@@ -52,28 +70,20 @@ WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R3.fastq.gz
 |  |  |  | Sample1_I1.fastq.gz
 |  |  |  | Sample1_I2.fastq.gz
-| |  | Sample2 | Sample2_R1.fastq.gz
-|  |  |  | Sample2_R2.fastq.gz
-|  |  |  | Sample2_R3.fastq.gz
-|  |  |  | Sample2_I1.fastq.gz
-|  |  |  | Sample2_I2.fastq.gz
+
 
 This is due to the extra data needed for the pipeline, namely the UMIs.
 
 Sample name | File
---- | ---
+:--- | ---:
 R1 | Read 1
 R2 | UMI (yeah I know I hate it too ...)
 R3 | Read 2
 I1 | Index 1
 I2 | Index 2
 
+The index files are delete and the lane files are concatenated and 
 
-### Prerequisites
-
-There is a slight difference in the folder set up for this pipeline
-
-This script will run a UMI based alignment and realignment around indels. This was written by Findlay Bewicke-Copley based on pipelines used by Nonacus and those developed by Jun Wang.
 
 The avaliable options are as follow:
 ```bash
