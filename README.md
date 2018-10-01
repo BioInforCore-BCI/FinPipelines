@@ -49,7 +49,19 @@ This script will run a UMI based alignment and realignment around indels. This w
 
 ### Prerequisites
 
-There is a slight difference in the folder set up for this pipeline, it assumes all the files are stored in FASTQ_Raw and it's first step is to concatenate all the lanes together and store all the fastq files in sample directories.
+There is a slight difference in the folder set up for this pipeline.
+
+This is due to the extra data needed for the pipeline, namely the UMIs.
+
+Sample name | File
+:--- | ---:
+R1 | Read 1
+R2 | UMI (yeah I know I hate it too ...)
+R3 | Read 2
+I1 | Index 1
+I2 | Index 2
+
+It assumes all the files are stored in FASTQ_Raw and it's first step is to concatenate all the lanes together and store all the fastq files in sample directories and also to delete the index files as they aren't needed (make sure you keep a zip of all the data incase you need to start again).
 
 i.e. the data will start like this:
 
@@ -67,23 +79,7 @@ Project root | raw | sample | .fastq.gz
 --- | --- | --- | ---
 WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
-|  |  |  | Sample1_R3.fastq.gz
-|  |  |  | Sample1_I1.fastq.gz
-|  |  |  | Sample1_I2.fastq.gz
-
-
-This is due to the extra data needed for the pipeline, namely the UMIs.
-
-Sample name | File
-:--- | ---:
-R1 | Read 1
-R2 | UMI (yeah I know I hate it too ...)
-R3 | Read 2
-I1 | Index 1
-I2 | Index 2
-
-The index files are delete and the lane files are concatenated and 
-
+|  |  |  | Sample1_UMI.fastq.gz
 
 The avaliable options are as follow:
 ```bash
