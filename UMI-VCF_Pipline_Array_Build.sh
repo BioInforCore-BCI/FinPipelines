@@ -8,7 +8,7 @@
 today=`date +%Y-%m-%d`
 DIR=$PWD
 jobName=UMI-VCF-$(basename $DIR)
-BED=/data/BCI-Haemato/Ref/Koorosh_Full_Panel_no_Chr.bed
+BED=''
 REFDIR=/data/BCI-Haemato/Refs/
 ## By Default use the hg37 reference genome
 REF=GRCh37
@@ -52,6 +52,15 @@ while [ "$1" != "" ]; do
 					;;
 		-f | --fastq-suffix )	shift
 					fastqSuffix=$1
+					;;
+		-h | --help )		echo "\
+-n | --name		Sets the job name (default - UMI-VCF-$PWD
+-b | --bed		Bed file for the project (default none - change this!)
+-d | --directory	Root directory for the project
+-r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
+-s | --setup 		Automatically start the job (default off)
+-f | --fastq-suffix 	Suffix for the fastq files (default .fastq.gz)
+-h | --help		Display this message"
 					;;
 	esac
 	shift
@@ -187,6 +196,7 @@ refIndex=$refIndex" > $alignJob
 
 echo '
 module load bwa
+module load java
 
 ## Get all the sample names from FASTQ_Raw
 Samples=(ls FASTQ_TRIM/*)
@@ -225,6 +235,7 @@ echo "
 #$ -N $jobName-fgbio_Job" > $fgbioJob
 
 echo '
+module load java
 ## Set fgbio parameters - NB this needs to have enough ram to load the whole fastq files.
 fgbio=\"java -Xmx12g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /data/home/hfx472/Software/fgbio-0.6.1.jar --compression=0\"
 
@@ -299,7 +310,7 @@ if ! [[ $? -eq 0 ]]; then echo $sampleName >> FAIL.txt;  continue; fi
 samtools view Alignment/$sampleName\.fgcon.bam | cut -f 12 > Stats/UMIcount/$sampleName.UMIcount
 
 mkdir -p Stats/UMIcount
-paste Stats/UMIcount/*.UMIcount | paste -d ',' - - | cut -d',' -f 1 | sed -e "s/cD:i://g" > Stats/UMIcount/AllUMICount.txt
+paste Stats/UMIcount/*.UMIcount | sed -e "s/cD:i://g" > Stats/UMIcount/AllUMICount.txt
 ' >> $fgbioJob
 
 
@@ -318,6 +329,8 @@ echo "
 " > $fastqconJob
 
 echo '
+module load java
+
 if ! [[ -d FASTQ_Con ]]; then mkdir FASTQ_Con; fi
 
 ## Get all the sample names from FASTQ_TRIM
@@ -325,15 +338,6 @@ Samples=(ls FASTQ_TRIM/*)
 ## Extract the file name at the position of the array job task ID
 sampleName=$(basename ${Samples[${SGE_TASK_ID}]})
 echo $Sample
-
-#module load samtools
-#samtools addreplacerg \
-#	-r ID:$sampleName \
-#	-r SM:$sampleName \
-#	-r LB:$sampleName \
-#	-r PL:ILLUMINA \
-#	-o Alignment/$sampleName\.fgcon.rehead.bam \
-#	Alignment$sampleName\.fgcon.bam
 
 if ! [[ -d FASTQ_Con/$sampleName ]]; then mkdir FASTQ_Con; fi
 
@@ -367,6 +371,7 @@ refIndex=$refIndex" > $conAlignJob
 
 echo '
 module load bwa
+module load java
 
 ## Get all the sample names from FASTQ_Raw
 Samples=(ls FASTQ_Con/*)
@@ -409,6 +414,8 @@ dbsnp=$dbsnp" > $realignJob
 
 
 echo '
+module load java
+
 Samples=(ls FASTQ_Con/*)
 ## Extract the file name at the position of the array job task ID
 Sample=$(basename ${Samples[${SGE_TASK_ID}]})
@@ -496,6 +503,7 @@ echo '
 module load parallel
 module load samtools
 module load annovar
+module load java
 
 
 varScan() {

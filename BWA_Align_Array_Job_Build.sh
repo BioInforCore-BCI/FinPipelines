@@ -37,6 +37,14 @@ while [ "$1" != "" ]; do
 						exit 1
 					fi
 					;;
+		-h | --help )		echo "\
+-a | --auto-start )		Automatically start the jobs on creation (default off)
+-n | --name )           	The name for the job (default BWA_Align)
+-d | --directory )      	The root directory for the project (default $PWD)
+-r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-h | --help 			Display this message and exit"
+					exit 1
+					;;
         esac
         shift
 done
@@ -134,7 +142,7 @@ fi
 ' >> $READ2JOB
 
 echo ' 
-if [[ $(ls Alignment/*.sai | wc -l ) -eq $TotalSAI ]] && [[ $(qstat -r | grep Full | grep BWA-$JOBNAME) -eq 1]];
+if [[ $(ls Alignment/*.sai | wc -l ) -eq $TotalSAI ]] && [[ $(qstat -r | grep Full | grep BWA-$JOBNAME-read | wc -l ) -eq 1 ]];
 	then echo Starting SAM production
 	qsub $COMBOJOB
 fi 
@@ -157,7 +165,7 @@ echo "
 #$ -l h_vmem=16G	# Request 16GB RAM / core
 #$ -t 1-$MAX
 #$ -tc 2		# only two jobs can run at the same time as the sams are massive, hopefully this will limit everything filling up.
-#$ -N BWA-$JOBNAME-MakeSam
+#$ -N BWA-$JOBNAME-MakeBam
 
 referenceindex=$referenceindex
 JOBNAME=$JOBNAME
@@ -177,9 +185,11 @@ outputsam=Alignment/$sampleName\.sam
 outputbam=Alignment/$sampleName\.bam
 
 module load bwa
+## There is a problem with default java, so need to load it here. 
+module load java
 echo ####MESS Step 1: Make Sam
 
-if ! [[ -f $outputsam ]] && ! [[ -f $outputbam ]]; then
+if ! [[ -s $outputsam ]] && ! [[ -s $outputbam ]]; then
 	time bwa sampe -r \
 		"@RG\tID:$sampleName\tLB:$sampleName\tSM:$sampleName\tPL:Illumina" \
 		$referenceindex \
@@ -188,11 +198,13 @@ if ! [[ -f $outputsam ]] && ! [[ -f $outputbam ]]; then
 		$read1name \
 		$read2name > $outputsam
 
+	## If the job fails remove the sam file and exit
 	if ! [[ $? -eq 0 ]]; then rm $outputsam; exit 1; fi 
 
 fi
 echo ####MESS Step 2: Make Bam
-if ! [[ -f $outputbam ]] && [[ -s $outputsam ]]; then
+## If the bam file does not exist or is smaller than 0 and the sam size is greater than 0 run the sort.
+if ! [[ -s $outputbam ]] && [[ -s $outputsam ]]; then
 	java -Xmx16g -Djava.io.tmpdir=/data/autoScratch/weekly/hfx472 -jar ~/Software/picard.jar SortSam \
 		SO=coordinate \
 		INPUT=$outputsam \
@@ -201,16 +213,17 @@ if ! [[ -f $outputbam ]] && [[ -s $outputsam ]]; then
 		CREATE_INDEX=true \
 		MAX_RECORDS_IN_RAM=5000000
 	
+	## If thejob does not fail and the bam size is greater than 0 delete the precursor files.
 	if [[ $? -eq 0 ]] && [[ -s $outputbam ]]; 
 		then echo deleting precursors;
-		rm $outputsam #$read1sai $read2sai;
+		rm $outputsam $read1sai $read2sai;
 	else
 		rm $outputbam
 	fi
 
 fi
 
-if [[ $(ls Alignment/*.bam | wc -l ) -eq $MAX ]] && [[ $(qstat -r | grep Full | grep BWA-$JOBNAME-MakeSam) -eq 1]];
+if [[ $(ls Alignment/*.bam | wc -l ) -eq $MAX ]] && [[ $(qstat -r | grep Full | grep BWA-$JOBNAME-MakeBam | wc -l) -eq 1 ]];
 	then echo Starting realignment
 	qsub $REALIGNJOB
 fi 
@@ -234,14 +247,16 @@ dbsnp=$dbsnp
 " | tee $REALIGNJOB
 
 echo '
+## There are problems with system java so load the newer version here
+module load java
+
 GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 PICARD=/data/home/hfx472/Software/picard.jar
+TEMP_FILES=/data/auoScratch/weekly/hfx472
 
 Samples=(ls FASTQ_Raw/*)
 ## Extract the file name at the position of the array job task ID
-
-# Sample=$(basename ${Samples[$1]})
-Sample=$(basename $1)
+Sample=$(basename ${Samples[${SGE_TASK_ID}]})
 
 echo $Sample
 
@@ -255,7 +270,7 @@ recalioutbam=Alignment/$Sample\.recalib.bam
 
 ## step 3: Marking PCR duplicates
 echo "####MESS Step 3: Marking PCR duplicates using Picard"
-java -Xmx16g -Djava.io.tmpdir=/tmp -jar $PICARD MarkDuplicates \
+java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD MarkDuplicates \
 	INPUT=$outputbam \
 	OUTPUT=$outputbammarked \
 	METRICS_FILE=$sampleName\.metrics.txt \
@@ -278,7 +293,7 @@ if [[ $? -eq 0 ]] && [[ -s $outputbammarked ]];
 fi
 
 echo "####MESS Step 4: realign reads around those targets"
-java -Xmx16g -Djava.io.tmpdir=/tmp -jar $GATK \
+java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $GATK \
         -I $outputbammarked \
         -R $reference \
         -T IndelRealigner \
@@ -293,7 +308,7 @@ if [[ $? -eq 0 ]] && [[ -s $realignmentbam ]];
 fi
 
 echo "####MESS Step 4: fix paired end mate information using Picard"
-java -Djava.io.tmpdir=/tmp -jar $PICARD FixMateInformation \
+java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD FixMateInformation \
         INPUT=$realignmentbam \
         OUTPUT=$realignmentfixbam \
         SO=coordinate \
@@ -319,7 +334,7 @@ java -Xmx16g -jar $GATK -T BaseRecalibrator \
 if ! [[ $? -eq 0 ]]; then exit 1; fi
 
 echo "####MESS Step 5: print recalibrated reads into BAM"
-java -jar $GATK -T PrintReads \
+java -Xmx16g -jar $GATK -T PrintReads \
         -R $reference \
         -I $realignmentfixbam \
         -BQSR $baserecaldata \
@@ -332,6 +347,7 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 		rm $realignmentfixbam \
         	$realignmentlist \
         	$baserecaldata
+		find -name "Alignment/*$Sample*" ! -name "*recalib*" -delete
 	else
    		exit 1;
 
