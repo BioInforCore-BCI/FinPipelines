@@ -3,7 +3,11 @@ Pipelines that generate array jobs.
 
 # BWA_Align_Array_Job_Build.sh
 
-This
+This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
+
+These scripts were written to run on 60X WGS data so the times can probably be reduced if you're looking at smaller files.
+
+The avaliable options are as follow
 ```bash
 -a | --auto-start )             Automatically start the jobs on creation (default off)
 -n | --name )                   The name for the job (default BWA_Align)
