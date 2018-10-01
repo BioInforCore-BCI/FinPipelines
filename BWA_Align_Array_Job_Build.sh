@@ -70,6 +70,7 @@ READ1JOB=$JOBDIR/$JOBNAME.$today.read1.sh
 READ2JOB=$JOBDIR/$JOBNAME.$today.read2.sh
 COMBOJOB=$JOBDIR/$JOBNAME.$today.combo.sh
 REALIGNJOB=$JOBDIR/$JOBNAME.$today.realign.sh
+STRELKAJOB=$JOBDIR/$JOBNAME.$today.strelka.sh
 
 ## All job files
 #$READ1JOB $READ2JOB $COMBOJOB $CONVERTJOB $DUPJOB $REALIGNJOB $RECALJOB
@@ -270,7 +271,7 @@ recalioutbam=Alignment/$Sample\.recalib.bam
 
 ## step 3: Marking PCR duplicates
 echo "####MESS Step 3: Marking PCR duplicates using Picard"
-java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD MarkDuplicates \
+time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD MarkDuplicates \
 	INPUT=$outputbam \
 	OUTPUT=$outputbammarked \
 	METRICS_FILE=$sampleName\.metrics.txt \
@@ -280,7 +281,7 @@ java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD MarkDuplicates \
 ## local alignment around indels
 echo "####MESS Step 4: local alignment around indels"
 echo "####MESS Step 4: first create a table of possible indels"
-java -Xmx16g -jar $GATK -T RealignerTargetCreator \
+time java -Xmx16g -jar $GATK -T RealignerTargetCreator \
         -R $reference \
         -o $realignmentlist \
         -I $outputbammarked
@@ -293,7 +294,7 @@ if [[ $? -eq 0 ]] && [[ -s $outputbammarked ]];
 fi
 
 echo "####MESS Step 4: realign reads around those targets"
-java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $GATK \
+time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $GATK \
         -I $outputbammarked \
         -R $reference \
         -T IndelRealigner \
@@ -308,7 +309,7 @@ if [[ $? -eq 0 ]] && [[ -s $realignmentbam ]];
 fi
 
 echo "####MESS Step 4: fix paired end mate information using Picard"
-java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD FixMateInformation \
+time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD FixMateInformation \
         INPUT=$realignmentbam \
         OUTPUT=$realignmentfixbam \
         SO=coordinate \
@@ -325,7 +326,7 @@ fi
 
 ## base quality score recalibration
 echo "####MESS Step 5: base quality score recalibration"
-java -Xmx16g -jar $GATK -T BaseRecalibrator \
+time java -Xmx16g -jar $GATK -T BaseRecalibrator \
         -I $realignmentfixbam \
         -R $reference \
         -knownSites $dbsnp \
@@ -334,13 +335,11 @@ java -Xmx16g -jar $GATK -T BaseRecalibrator \
 if ! [[ $? -eq 0 ]]; then exit 1; fi
 
 echo "####MESS Step 5: print recalibrated reads into BAM"
-java -Xmx16g -jar $GATK -T PrintReads \
+time java -Xmx16g -jar $GATK -T PrintReads \
         -R $reference \
         -I $realignmentfixbam \
         -BQSR $baserecaldata \
         -o $recalioutbam
-
-date
 
 if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 	then
@@ -354,6 +353,41 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 fi
 ' >> $REALIGNJOB
 
+echo "
+#!/bin/bash
+#$ -wd $DIR             # Set the working directory for the job to the current directory
+#$ -pe smp 8            # 8 cores
+#$ -l h_rt=4:0:0       # Request 10 hours First run tool ~6 hours so leave a bit of a buffer
+#$ -l h_vmem=4G         # Request 4GB RAM PER CORE
+#$ -m a                 # email on abort
+#$ -o /data/autoScratch/weekly/$USER/
+#$ -j y
+#$ -t 1-10
+#$ -N Strelka-$JOBNAME
+
+STRELKA=/data/home/$USER/Software/strelka-2.9.4/bin/configureStrelkaSomaticWorkflow.py
+DIR=$DIR
+" > $STRELKAJOB
+
+echo '
+normalBams=(ls $DIR/Alignment/*normal*.bam)
+Patient=$(basename ${normalBams[${SGE_TASK_ID}]} | cut -d'.' -f 1)
+normalBam=$DIR/Alignment/$Patient*normal*.bam
+tumourBam=$DIR/Alignment/$Patient*tumour*.bam
+
+if ! [[ -d $DIR/VCF ]]; then mkdir $DIR/VCF
+
+echo Configuring Strelka workflow
+
+time ~/Software/strelka-2.9.4/bin/configureStrelkaSomaticWorkflow.py \
+        --normalBam $normalBAM \
+        --tumorBam $tumourBAM \
+        --ref $refGenome  \
+        --runDir $DIR/VCF/$Patient || exit 1
+
+echo running Strelka
+time $DIR/VCF/$Patient/runWorkflow.py -m local -j 8 || exit 1
+' > $STRELKAJOB
 
 if [[ $AUTOSTART -eq 1 ]]; then 
 	echo autostarting pipeline
