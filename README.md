@@ -29,7 +29,6 @@ Make sure you've checked the files with fastqc etc and trimmed if needed.
 
 ***
 
-<a name="BWA"></a>
 ## BWA_Align_Array_Job_Build.sh
 
 This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
@@ -48,7 +47,7 @@ If the script is set to autorun then it will load the SAI arrays straight away, 
 
 ***
 
-UMI-VCF_Pipline_Array_Build.sh
+## UMI-VCF_Pipline_Array_Build.sh
 
 This script will run a UMI based alignment and realignment around indels. This was written by Findlay Bewicke-Copley based on pipelines used by Nonacus and those developed by Jun Wang.
 
