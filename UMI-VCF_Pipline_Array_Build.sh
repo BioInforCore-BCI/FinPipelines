@@ -54,7 +54,7 @@ while [ "$1" != "" ]; do
 					fastqSuffix=$1
 					;;
 		-h | --help )		echo "\
--n | --name		Sets the job name (default - UMI-VCF-$PWD
+-n | --name		Sets the job name (default - UMI-VCF-$PWD)
 -b | --bed		Bed file for the project (default none - change this!)
 -d | --directory	Root directory for the project
 -r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
