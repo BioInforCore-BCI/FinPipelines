@@ -83,11 +83,12 @@ WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 
 The avaliable options are as follow:
 ```bash
--n | --name		Sets the job name (default - UMI-VCF-$PWD)
--b | --bed		Bed file for the project (default none - change this!)
--d | --directory	Root directory for the project
--r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
--s | --setup 		Automatically start the job (default off)
--f | --fastq-suffix 	Suffix for the fastq files (default .fastq.gz)
--h | --help		Display this message
+-a | --autostart      Automaticall start the job
+-n | --name           Sets the job name (default - UMI-VCF-$PWD)
+-b | --bed            Bed file for the project (default none - change this!)
+-d | --directory      Root directory for the project
+-r | --ref            Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
+-s | --setup          Run the set up (cat the files together and create sample directories) (default off)
+-f | --fastq-suffix   Suffix for the fastq files (default .fastq.gz)
+-h | --help           Display this message
 ```
