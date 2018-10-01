@@ -1,14 +1,26 @@
-# array-job_building_scripts
+# Array-job_building_scripts
 Pipelines that generate array jobs.
 
-# Prerequisites
+## Prerequisites
 
 Software | Expected location on server
 --- | ---
 <a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software 
-Genome Analysis Toolkit | The GenomeAnalysisTK.jar should be in /data/home/$USER/Software 
+Genome Analysis Toolkit | The GenomeAnalysisTK.jar should be in /data/home/$USER/Software
 
-# BWA_Align_Array_Job_Build.sh
+The rest should be handled by the moduules on apocrita unless something breaks. If you're not sure try loading the modules before running your scripts or something I don't know I'm not your mother ...
+
+## BWA_Align_Array_Job_Build.sh
+
+### Prerequisites
+
+The script expects the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the samples.
+
+Project root | raw | sample | .fastq.gz 
+--- | --- | --- | ---
+WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+ |  |  | Sample1_R2.fastq.gz
+
 
 This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
 
@@ -22,3 +34,4 @@ The avaliable options are as follow:
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
 ```
+If the script is set to autorun then it will load the SAI arrays straight away, otherwise the job files will just sit there waiting for you. The jobs *should* be submitted to the server as they previous job finishes but keep an eye on it. 
