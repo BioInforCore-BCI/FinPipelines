@@ -31,7 +31,8 @@ Make sure you've checked the files with fastqc etc and trimmed if needed.
 
 ***
 
-<a name="BWA">## BWA_Align_Array_Job_Build.sh</a>
+<a name="BWA"></a>
+## BWA_Align_Array_Job_Build.sh
 
 This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
 
