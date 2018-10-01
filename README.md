@@ -19,7 +19,9 @@ The script expects the fastq files are stored in a directory called FASTQ_Raw. I
 Project root | raw | sample | .fastq.gz 
 --- | --- | --- | ---
 WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
- |  |  | Sample1_R2.fastq.gz
+|  |  |  | Sample1_R2.fastq.gz
+| |  | Sample2 | Sample2_R1.fastq.gz
+|  |  |  | Sample2_R2.fastq.gz
 
 
 This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
