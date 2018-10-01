@@ -10,11 +10,9 @@ Genome Analysis Toolkit | The GenomeAnalysisTK.jar should be in /data/home/$USER
 
 The rest should be handled by the moduules on apocrita unless something breaks. If you're not sure try loading the modules before running your scripts or something I don't know I'm not your mother ...
 
-## BWA_Align_Array_Job_Build.sh
+The scripts will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the samples.
 
-### Prerequisites
-
-The script expects the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the samples.
+i.e.
 
 Project root | raw | sample | .fastq.gz 
 --- | --- | --- | ---
@@ -23,6 +21,11 @@ WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 | |  | Sample2 | Sample2_R1.fastq.gz
 |  |  |  | Sample2_R2.fastq.gz
 
+Make sure you've checked the files with fastqc etc and trimmed if needed.
+
+***
+
+## BWA_Align_Array_Job_Build.sh
 
 This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
 
