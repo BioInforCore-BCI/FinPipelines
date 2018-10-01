@@ -1,12 +1,10 @@
 # Array-job_building_scripts
 Pipelines that generate array jobs.
+Avaliable pipelines
 
 1. BWA_Align_Array_Job_Build.sh
 2. UMI-VCF_Pipline_Array_Build.sh
 
-
-
-[BWA]{#bwa}
 ## Prerequisites
 
 Software | Expected location on server
