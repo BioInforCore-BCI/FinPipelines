@@ -61,6 +61,7 @@ WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 This is due to the extra data needed for the pipeline, namely the UMIs.
 
 Sample name | File
+--- | ---
 R1 | Read 1
 R2 | UMI (yeah I know I hate it too ...)
 R3 | Read 2
