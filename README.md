@@ -87,7 +87,7 @@ WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 
 The avaliable options are as follow:
 ```bash
--a | --autostart      Automaticall start the job
+-a | --autostart      Automatically start the job
 -n | --name           Sets the job name (default - UMI-VCF-$PWD)
 -b | --bed            Bed file for the project (default none - change this!)
 -d | --directory      Root directory for the project
