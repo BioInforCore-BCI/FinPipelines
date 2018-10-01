@@ -4,8 +4,8 @@ Pipelines that generate array jobs.
 # Prerequisites
 
 <a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">
-Picard tools</a> - The picard.jar file should be found in /data/home/$USER/Software  
-Genome Analysis Toolkit - The GenomeAnalysisTK.jar should be in /data/home/$USER/Software
+| Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software |
+| Genome Analysis Toolkit | The GenomeAnalysisTK.jar should be in /data/home/$USER/Software |
 
 # BWA_Align_Array_Job_Build.sh
 
