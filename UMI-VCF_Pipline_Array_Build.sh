@@ -21,9 +21,13 @@ SETUP=0
 GATK=/data/hfx472/Software/GenomeAnalysisTK.jar
 PICARD=/data/hfx472/Software/picard.jar
 
+AUTOSTART=0
+
 ## Process Arguments
 while [ "$1" != "" ]; do
         case $1 in
+		-a | --autostart )	AUTOSTART=1
+					;;
 		-n | --name )		shift
 					jobName=$1
 					;;
@@ -54,11 +58,12 @@ while [ "$1" != "" ]; do
 					fastqSuffix=$1
 					;;
 		-h | --help )		echo "\
+-a | --autostart	Automaticall start the job
 -n | --name		Sets the job name (default - UMI-VCF-$PWD)
 -b | --bed		Bed file for the project (default none - change this!)
 -d | --directory	Root directory for the project
 -r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
--s | --setup 		Automatically start the job (default off)
+-s | --setup 		Run the set up (cat the files together and create sample directories) (default off)
 -f | --fastq-suffix 	Suffix for the fastq files (default .fastq.gz)
 -h | --help		Display this message"
 					;;
@@ -103,10 +108,10 @@ if [[ SETUP -eq 1 ]] && ! [[ -d FASTQ_TRIM ]] && ! [[ -d FASTQ_Con ]]; then
 		# Get the name of the sample by cutting off the rest of the filename for lane 1 read 1
 	        do sample=$(basename $file | awk -F '_L00' {print $1} );
 	        mkdir $DIR/FASTQ_Raw/$sample;
-	        cat $DIR/FASTQ_Raw/*R1* > $DIR/FASTQ_Raw/$sample/$sample_R1.fastq.gz;
-	        cat $DIR/FASTQ_Raw/*R2* > $DIR/FASTQ_Raw/$sample/$sample_UMI.fastq.gz;
-	        cat $DIR/FASTQ_Raw/*R3* > $DIR/FASTQ_Raw/$sample/$sample_R2.fastq.gz;
-		rm $DIR/FASTQ_Raw/*$fastqSuffix
+	        cat $DIR/FASTQ_Raw/$sample*R1* > $DIR/FASTQ_Raw/$sample/$sample_R1.fastq.gz;
+	        cat $DIR/FASTQ_Raw/$sample*R2* > $DIR/FASTQ_Raw/$sample/$sample_UMI.fastq.gz;
+	        cat $DIR/FASTQ_Raw/$sample*R3* > $DIR/FASTQ_Raw/$sample/$sample_R2.fastq.gz;
+		rm $DIR/FASTQ_Raw/$sample*$fastqSuffix
 	
 	done
 
@@ -619,3 +624,8 @@ fi
 
 Rscript /data/hfx472/Software/MyScripts/VariantCalling/VariantFix.r
 ' >> $varFiltJob
+
+if [[ $AUTOSTART -eq 1 ]]; then
+	echo Starting the jobs. Good luck!
+	qsub $trimJob
+fi
