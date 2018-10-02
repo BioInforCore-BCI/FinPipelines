@@ -35,11 +35,11 @@ while [ "$1" != "" ]; do
                                         fi
                                         ;;
                 -h | --help )           echo "\
--a | --auto-start )             Automatically start the jobs on creation (default off)
--n | --name )                   The name for the job (default BWA_Align)
--d | --directory )              The root directory for the project (default $PWD)
--r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
--h | --help                     Display this message and exit"
+-a | --auto-start		Automatically start the jobs on creation (default off)
+-n | --name			The name for the job (default BWA_Align)
+-d | --directory		The root directory for the project (default $PWD)
+-r | --refdir			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-h | --help			Display this message and exit"
                                         exit 1
                                         ;;
         esac
@@ -74,7 +74,7 @@ reference=$reference
 
 echo '
 ## This script will look at the normal bam files and extract a prefix that will identify them and their tumour pair.
-## If this prefix doens't exist this will cause problems.
+## If this prefix does not exist this will cause problems.
 ## Ensure you have a prefix at the start of your files to identify patients followed by a period
 ## TODO - Make this smarter. Maybe allow a file to be submitted which contains the pairing?
 normalBams=(ls $DIR/Alignment/*normal*.bam)
