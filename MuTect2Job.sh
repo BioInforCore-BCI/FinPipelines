@@ -108,3 +108,8 @@ time parallel -j 8 varScan ::: ${Chrom[@]}
 cat $DIR/VCF/Mutect2/$Patient_1_tmp.vcf | grep -e "^#" > $DIR/VCF/Mutect2/$Patient.vcf
 cat $DIR/VCF/Mutect2/$Patient*tmp.vcf | grep -ve "^#" >> $DIR/VCF/Mutect2/$Patient.vcf
 ' >> $MUTECT2JOB
+
+if [[ $AUTOSTART -eq 1 ]]; then
+	echo Submitting array to the queue
+	qsub $MUTECT2JOB
+fi
