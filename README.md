@@ -11,6 +11,7 @@ Software | Expected location on server
 --- | ---
 <a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software 
 <a href="https://software.broadinstitute.org/gatk/download/">Genome Analysis Toolkit</a> | The GenomeAnalysisTK.jar should be in /data/home/$USER/Software
+<a href="https://github.com/Illumina/strelka/tree/master">Strelka</a> | Strelka root dir should be in /data/home/$USER/Software
 
 The rest should be handled by the modules on apocrita unless something breaks. If you're not sure try loading the modules before running your scripts or something, I don't know I'm not your mother ...
 
@@ -37,9 +38,9 @@ These scripts were written to run on 60X WGS data so the times can probably be r
 
 The avaliable options are as follow:
 ```bash
--a | --auto-start )             Automatically start the jobs on creation (default off)
--n | --name )                   The name for the job (default BWA_Align)
--d | --directory )              The root directory for the project (default $PWD)
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name                     The name for the job (default BWA_Align)
+-d | --directory                The root directory for the project (default $PWD)
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
 ```
@@ -96,7 +97,9 @@ The avaliable options are as follow:
 -f | --fastq-suffix   Suffix for the fastq files (default .fastq.gz)
 -h | --help           Display this message
 ```
+
 ***
+
 ## Strelka_Array.sh
 
 This will build a strelka array job.
@@ -123,9 +126,9 @@ Patient 2 | Tumour | .bam
 Patient 2 | Tumour | .bai
 
 ```bash
--a | --auto-start )             Automatically start the jobs on creation (default off)
--n | --name )                   The name for the job (default BWA_Align)
--d | --directory )              The root directory for the project (default $PWD)
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name                     The name for the job (default BWA_Align)
+-d | --directory                The root directory for the project (default $PWD)
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
 ```
