@@ -6,7 +6,11 @@ Avaliable pipelines
 2. UMI-VCF_Pipline_Array_Build.sh
 3. Strelka_Array.sh
 4. Samtools_Index_Array.sh
-[Go to Real Cool Heading section](#bwa_align_array_job_buildsh)
+
+[1. BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)
+[2. UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)
+[3. Strelka_Array.sh](#strelka_arraysh)
+[4. Samtools_Index_Array.sh](#samtools_index_arraysh)
 
 ## Prerequisites
 
