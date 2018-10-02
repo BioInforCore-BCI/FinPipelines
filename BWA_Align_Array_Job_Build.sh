@@ -38,9 +38,9 @@ while [ "$1" != "" ]; do
 					fi
 					;;
 		-h | --help )		echo "\
--a | --auto-start )		Automatically start the jobs on creation (default off)
--n | --name )           	The name for the job (default BWA_Align)
--d | --directory )      	The root directory for the project (default $PWD)
+-a | --auto-start 		Automatically start the jobs on creation (default off)
+-n | --name 	           	The name for the job (default BWA_Align)
+-d | --directory 	      	The root directory for the project (default $PWD)
 -r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help 			Display this message and exit"
 					exit 1
