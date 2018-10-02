@@ -1,5 +1,5 @@
-# Array-job_building_scripts
-Pipelines that generate array jobs.\
+# Fin's Arrays.
+Scripts that generate array jobs for pipelines.\
 Avaliable pipelines:
 
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
