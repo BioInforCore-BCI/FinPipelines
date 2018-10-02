@@ -62,7 +62,7 @@ echo "
 #!/bin/sh
 #$ -cwd           # Set the working directory for the job to the current directory
 #$ -pe smp 1      # Request 1 cores - running multiple cores seems to cause issues.
-#$ -l h_rt=24:0:0 # Request 24 hour runtime
+#$ -l h_rt=48:0:0 # Request 24 hour runtime
 #$ -l h_vmem=4G   # Request 4GB RAM per core
 #$ -m a
 #$ -o /data/home/hfx472/.JobOutput
