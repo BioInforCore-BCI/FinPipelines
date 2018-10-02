@@ -5,6 +5,8 @@ Avaliable pipelines
 1. BWA_Align_Array_Job_Build.sh
 2. UMI-VCF_Pipline_Array_Build.sh
 3. Strelka_Array.sh
+4. Samtools_Index_Array.sh
+
 ## Prerequisites
 
 Software | Expected location on server
@@ -131,4 +133,16 @@ Patient 2 | Tumour | .bai
 -d | --directory                The root directory for the project (default $PWD)
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
+```
+***
+
+## Samtools_Index_Array.sh
+
+Does what it says in the name, will build and submit an array script that will index all bam files in Alignment/
+
+Options:
+```bash
+-n | --name			The name for the job (default BWA_Align)
+-d | --directory		The root directory for the project (default $PWD)
+-h | --help			Display this message and exit"
 ```
