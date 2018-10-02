@@ -58,6 +58,6 @@ Bams=(ls $DIR/Alignment/*.bam)
 Bam=${Bams[${SGE_TASK_ID}]}
 
 samtools index $Bam
-' >  $SAMTOOLSJOB
+' >>  $SAMTOOLSJOB
 
 qsub $SAMTOOLSJOB
