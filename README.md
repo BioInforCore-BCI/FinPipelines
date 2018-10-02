@@ -4,7 +4,7 @@ Avaliable pipelines
 
 1. BWA_Align_Array_Job_Build.sh
 2. UMI-VCF_Pipline_Array_Build.sh
-
+3. Strelka_Array.sh
 ## Prerequisites
 
 Software | Expected location on server
@@ -95,4 +95,36 @@ The avaliable options are as follow:
 -s | --setup          Run the set up (cat the files together and create sample directories) (default off)
 -f | --fastq-suffix   Suffix for the fastq files (default .fastq.gz)
 -h | --help           Display this message
+```
+***
+## Strelka_Array.sh
+
+This will build a strelka array job.
+
+### Prerequisites
+
+The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
+The script picks bam files based on a common prefix at the start of the file.
+It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
+This is then used to find the Prefix*normal*.bam and Prefix*tumour*.bam.
+The Bam files must also be indexed.
+
+i.e.
+Patient Prefix | Sample | .suffix 
+--- | --- | --- | ---
+Patient 1 | Normal | .bam
+Patient 1 | Normal | .bai
+Patient 1 | Tumour | .bam
+Patient 1 | Tumour | .bai
+Patient 2 | Normal | .bam
+Patient 2 | Normal | .bai
+Patient 2 | Tumour | .bam
+Patient 2 | Tumour | .bai
+
+```bash
+-a | --auto-start )             Automatically start the jobs on creation (default off)
+-n | --name )                   The name for the job (default BWA_Align)
+-d | --directory )              The root directory for the project (default $PWD)
+-r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-h | --help                     Display this message and exit"
 ```
