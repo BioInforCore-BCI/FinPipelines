@@ -48,12 +48,17 @@ done
 
 ## Output job script in project root dir
 JOBDIR=$DIR
-$STRELKAJOB=$JOBDIR/$JOBNAME-$today-strelka.sh
+STRELKAJOB=$JOBDIR/$JOBNAME-$today-strelka.sh
 
 ## Location of correct version of reference
 REFDIR=$REFDIR/$REF
 ## This automatically gets the correct reference as long as it is the only .fa file in the directory.
 reference=$( ls  $REFDIR/*.fa )
+
+# Get max number of files. 
+normalBams=(ls $DIR/Alignment/*normal*.bam)
+MAX=$(echo ${#normalBams[@]})
+MAX=$( expr $MAX - 1 )
 
 echo "
 #!/bin/bash
