@@ -33,7 +33,7 @@ i.e.
 
 Project root | raw | sample | .fastq.gz 
 --- | --- | --- | ---
-WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+WGS | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
 | |  | Sample2 | Sample2_R1.fastq.gz
 |  |  |  | Sample2_R2.fastq.gz
@@ -76,7 +76,7 @@ i.e. the data will start like this:
 
 Project root | raw  | .fastq.gz 
 --- | --- | ---
-WGS_60X | FASTQ_Raw | Sample1_R1.fastq.gz
+UMI_panel | FASTQ_Raw | Sample1_R1.fastq.gz
 |  |  | Sample1_R2.fastq.gz
 |  |  | Sample1_R3.fastq.gz
 |  |  | Sample1_I1.fastq.gz
@@ -86,7 +86,7 @@ And end up looking like this:
 
 Project root | raw | sample | .fastq.gz 
 --- | --- | --- | ---
-WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+UMI_panel | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
 |  |  |  | Sample1_UMI.fastq.gz
 
@@ -114,7 +114,7 @@ i.e.
 
 Project root | raw | sample | .fastq.gz 
 --- | --- | --- | ---
-WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
 | |  | Sample2 | Sample2_R1.fastq.gz
 |  |  |  | Sample2_R2.fastq.gz
