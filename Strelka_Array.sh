@@ -105,7 +105,7 @@ time $STRELKA \
 ## if it fails exit with status 1 
 echo running Strelka
 time $DIR/VCF/$Patient/runWorkflow.py -m local -j 8 || exit 1
-' > $STRELKAJOB
+' >> $STRELKAJOB
 
 if [[ $AUTOSTART -eq 1 ]]; then
         echo Submitting the job to the queue
