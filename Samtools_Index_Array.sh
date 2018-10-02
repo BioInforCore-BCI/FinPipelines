@@ -39,24 +39,25 @@ MAX=$( expr $MAX - 1 )
 
 echo "
 #!/bin/bash
-#$ -cwd                 # set current working dir
-#$ -pe smp 1            # Can't multithread
-#$ -l h_rt=4:0:0        # Should only take a few hours, ask for 4 to be safe.
-#$ -l h_vmem=1G         # Shouldn't need much ram ask for 1 G
-#$ -o /dev/null
-#$ -j y
-#$ -m a
-#$ -t 1-$MAX
+#$ -wd $DIR		# set current working dir
+#$ -pe smp 1		# Can't multithread
+#$ -l h_rt=4:0:0	# Should only take a few hours, ask for 4 to be safe.
+#$ -l h_vmem=1G		# Shouldn't need much ram ask for 1 G
+#$ -o /dev/null		# Destroy output
+#$ -j y			# Join error and output
+#$ -m a			# Email on abort
+#$ -t 1-$MAX		# Set as array
 #$ -N $Jobname-samtools
 
 module load samtools
+DIR=$DIR
 " >  $SAMTOOLSJOB
 
 echo '
 Bams=(ls $DIR/Alignment/*.bam)
 Bam=${Bams[${SGE_TASK_ID}]}
 
-samtools index $1
+samtools index $Bam
 ' >  $SAMTOOLSJOB
 
 qsub $SAMTOOLSJOB
