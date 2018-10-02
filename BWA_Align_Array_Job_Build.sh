@@ -70,7 +70,6 @@ READ1JOB=$JOBDIR/$JOBNAME.$today.read1.sh
 READ2JOB=$JOBDIR/$JOBNAME.$today.read2.sh
 COMBOJOB=$JOBDIR/$JOBNAME.$today.combo.sh
 REALIGNJOB=$JOBDIR/$JOBNAME.$today.realign.sh
-STRELKAJOB=$JOBDIR/$JOBNAME.$today.strelka.sh
 
 ## All job files
 #$READ1JOB $READ2JOB $COMBOJOB $CONVERTJOB $DUPJOB $REALIGNJOB $RECALJOB
@@ -352,42 +351,6 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 
 fi
 ' >> $REALIGNJOB
-
-echo "
-#!/bin/bash
-#$ -wd $DIR             # Set the working directory for the job to the current directory
-#$ -pe smp 8            # 8 cores
-#$ -l h_rt=4:0:0       # Request 10 hours First run tool ~6 hours so leave a bit of a buffer
-#$ -l h_vmem=4G         # Request 4GB RAM PER CORE
-#$ -m a                 # email on abort
-#$ -o /data/autoScratch/weekly/$USER/
-#$ -j y
-#$ -t 1-10
-#$ -N Strelka-$JOBNAME
-
-STRELKA=/data/home/$USER/Software/strelka-2.9.4/bin/configureStrelkaSomaticWorkflow.py
-DIR=$DIR
-" > $STRELKAJOB
-
-echo '
-normalBams=(ls $DIR/Alignment/*normal*.bam)
-Patient=$(basename ${normalBams[${SGE_TASK_ID}]} | cut -d'.' -f 1)
-normalBam=$DIR/Alignment/$Patient*normal*.bam
-tumourBam=$DIR/Alignment/$Patient*tumour*.bam
-
-if ! [[ -d $DIR/VCF ]]; then mkdir $DIR/VCF
-
-echo Configuring Strelka workflow
-
-time ~/Software/strelka-2.9.4/bin/configureStrelkaSomaticWorkflow.py \
-        --normalBam $normalBAM \
-        --tumorBam $tumourBAM \
-        --ref $refGenome  \
-        --runDir $DIR/VCF/$Patient || exit 1
-
-echo running Strelka
-time $DIR/VCF/$Patient/runWorkflow.py -m local -j 8 || exit 1
-' > $STRELKAJOB
 
 if [[ $AUTOSTART -eq 1 ]]; then 
 	echo autostarting pipeline
