@@ -47,7 +47,7 @@ done
 
 ## Output job script in project root dir
 JOBDIR=$DIR
-$STRELKAJOB=$JOBDIR/Strelka-$JOBNAME-$today.sh
+$STRELKAJOB=$JOBDIR/$JOBNAME-$today-strelka.sh
 
 ## Location of correct version of reference
 REFDIR=$REFDIR/$REF
