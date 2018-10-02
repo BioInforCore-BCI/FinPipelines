@@ -67,7 +67,7 @@ echo "
 #$ -m a
 #$ -o /data/home/hfx472/.JobOutput
 #$ -e /data/home/hfx472/.JobOutput
-#$ -N MuTect2_${CHROM[$index]}
+#$ -N MuTect2_$JOBNAME
 # TODO work out what times I need.
 
 GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
