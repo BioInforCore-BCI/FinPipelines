@@ -4,7 +4,8 @@ Avaliable pipelines:
 
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 2. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
-3. [Strelka_Array.sh](#strelka_arraysh)  
+3. [Strelka_Array.sh](#strelka_arraysh)
+4. [MuTect2Job.sh](#mutect2jobsh)
 4. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 
 ## Prerequisites
@@ -104,7 +105,7 @@ The avaliable options are as follow:
 
 ## Strelka_Array.sh
 
-This will build a strelka array job.
+This will build a strelka array job for matched tumour/normal pairs.
 
 ### Prerequisites
 
@@ -127,6 +128,7 @@ Patient 2 | Normal | .bai
 Patient 2 | Tumour | .bam
 Patient 2 | Tumour | .bai
 
+Options avaliable:
 ```bash
 -a | --auto-start               Automatically start the jobs on creation (default off)
 -n | --name                     The name for the job (default BWA_Align)
@@ -134,6 +136,39 @@ Patient 2 | Tumour | .bai
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
 ```
+***
+## MuTect2Job.sh
+
+This will build a MuTect 2 array job for matched tumour/normal pairs.
+
+### Prerequisites
+
+The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
+The script picks bam files based on a common prefix at the start of the file.
+It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
+This is then used to find the Prefix*normal*.bam and Prefix*tumour*.bam.
+The Bam files must also be indexed.
+
+i.e.
+
+ Patient Prefix | Sample | .suffix 
+ --- | --- | ---
+ Patient 1 | Normal | .bam
+Patient 1 | Normal | .bai
+Patient 1 | Tumour | .bam
+Patient 1 | Tumour | .bai
+Patient 2 | Normal | .bam
+Patient 2 | Normal | .bai
+Patient 2 | Tumour | .bam
+Patient 2 | Tumour | .bai
+
+Options avaliable:
+-a | --auto-start		Automatically start the jobs on creation (default off)
+-n | --name			The name for the job (default BWA_Align)
+-d | --directory		The root directory for the project (default $PWD)
+-r | --refdir			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-h | --help			Display this message and exit
+
 ***
 
 ## Samtools_Index_Array.sh
