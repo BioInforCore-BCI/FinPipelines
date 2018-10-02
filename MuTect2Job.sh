@@ -2,7 +2,7 @@
 
 today=`date +%Y-%m-%d`
 DIR=$PWD
-JOBNAME=Strelka_Pipeline
+JOBNAME=Mutect2_Pipeline_$DIR
 ## Location of reference files
 REFDIR=/data/BCI-Haemato/Refs/
 ## By Default use the hg37 reference genome
@@ -61,7 +61,7 @@ MAX=$( expr $MAX - 1 )
 echo "
 #!/bin/sh
 #$ -cwd           # Set the working directory for the job to the current directory
-#$ -pe smp 1      # Request 1 cores - running multiple cores seems to cause issues.
+#$ -pe smp 8      # Request 1 cores - running multiple cores seems to cause issues.
 #$ -l h_rt=48:0:0 # Request 24 hour runtime
 #$ -l h_vmem=4G   # Request 4GB RAM per core
 #$ -m a
@@ -73,7 +73,7 @@ echo "
 GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 TEMP_FILES=/data/auoScratch/weekly/hfx472
 export reference=$reference
-" > MUTECT2JOB
+" > $MUTECT2JOB
 
 echo '
 
@@ -105,5 +105,6 @@ export -f Mutect2
 
 time parallel -j 8 varScan ::: ${Chrom[@]}
 
-cat 
-' >> MUTECT2JOB
+cat $DIR/VCF/Mutect2/$Patient_1_tmp.vcf | grep -e "^#" > $DIR/VCF/Mutect2/$Patient.vcf
+cat $DIR/VCF/Mutect2/$Patient*tmp.vcf | grep -ve "^#" >> $DIR/VCF/Mutect2/$Patient.vcf
+' >> $MUTECT2JOB
