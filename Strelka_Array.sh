@@ -7,6 +7,7 @@ JOBNAME=Strelka_Pipeline
 REFDIR=/data/BCI-Haemato/Refs/
 ## By Default use the hg37 reference genome
 REF=GRCh37
+AUTOSTART=0
 
 while [ "$1" != "" ]; do
         case $1 in
