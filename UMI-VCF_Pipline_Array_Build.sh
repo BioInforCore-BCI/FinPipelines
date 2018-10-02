@@ -67,6 +67,7 @@ while [ "$1" != "" ]; do
 -s | --setup 		Run the set up (cat the files together and create sample directories) (default off)
 -f | --fastq-suffix 	Suffix for the fastq files (default .fastq.gz)
 -h | --help		Display this message"
+					exit 1
 					;;
 	esac
 	shift
