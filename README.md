@@ -5,7 +5,7 @@ Avaliable pipelines:
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
 1. [Strelka_Array.sh](#strelka_arraysh)
-1. [MuTect2Job.sh](#mutect2jobsh)
+1. [MuTect2_Array.sh](#mutect2_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 
 ## Prerequisites
@@ -137,7 +137,7 @@ Options avaliable:
 -h | --help                     Display this message and exit"
 ```
 ***
-## MuTect2Job.sh
+## MuTect2_Array.sh
 
 This will build a MuTect 2 array job for matched tumour/normal pairs.
 
