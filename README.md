@@ -96,7 +96,9 @@ The avaliable options are as follow:
 -f | --fastq-suffix   Suffix for the fastq files (default .fastq.gz)
 -h | --help           Display this message
 ```
+
 ***
+
 ## Strelka_Array.sh
 
 This will build a strelka array job.
@@ -123,9 +125,9 @@ Patient 2 | Tumour | .bam
 Patient 2 | Tumour | .bai
 
 ```bash
--a | --auto-start )             Automatically start the jobs on creation (default off)
--n | --name )                   The name for the job (default BWA_Align)
--d | --directory )              The root directory for the project (default $PWD)
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name                     The name for the job (default BWA_Align)
+-d | --directory                The root directory for the project (default $PWD)
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
 ```
