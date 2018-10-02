@@ -114,13 +114,13 @@ i.e.
 Alignment/ | Patient Prefix | Sample | .suffix 
 --- | --- | --- | ---
 Alignment/ | Patient 1 | Normal | .bam
-| Patient 1 | Normal | .bai
-| Patient 1 | Tumour | .bam
-| Patient 1 | Tumour | .bai
-| Patient 2 | Normal | .bam
-| Patient 2 | Normal | .bai
-| Patient 2 | Tumour | .bam
-| Patient 2 | Tumour | .bai
+  | Patient 1 | Normal | .bai
+  | Patient 1 | Tumour | .bam
+  | Patient 1 | Tumour | .bai
+  | Patient 2 | Normal | .bam
+  | Patient 2 | Normal | .bai
+  | Patient 2 | Tumour | .bam
+  | Patient 2 | Tumour | .bai
 
 ```bash
 -a | --auto-start )             Automatically start the jobs on creation (default off)
