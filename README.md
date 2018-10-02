@@ -14,7 +14,15 @@ Software | Expected location on server
 
 The rest should be handled by the modules on apocrita unless something breaks. If you're not sure try loading the modules before running your scripts or something, I don't know I'm not your mother ...
 
-The scripts will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the samples.
+Make sure you've checked the files with fastqc etc and trimmed if needed.
+
+***
+
+## BWA_Align_Array_Job_Build.sh
+
+This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
+
+The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files.
 
 i.e.
 
@@ -24,14 +32,6 @@ WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
 | |  | Sample2 | Sample2_R1.fastq.gz
 |  |  |  | Sample2_R2.fastq.gz
-
-Make sure you've checked the files with fastqc etc and trimmed if needed.
-
-***
-
-## BWA_Align_Array_Job_Build.sh
-
-This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
 
 These scripts were written to run on 60X WGS data so the times can probably be reduced if you're looking at smaller files.
 
@@ -110,16 +110,17 @@ This is then used to find the Prefix*normal*.bam and Prefix*tumour*.bam.
 The Bam files must also be indexed.
 
 i.e.
-Patient Prefix | Sample | .suffix 
+
+Alignment/ | Patient Prefix | Sample | .suffix 
 --- | --- | --- | ---
-Patient 1 | Normal | .bam
-Patient 1 | Normal | .bai
-Patient 1 | Tumour | .bam
-Patient 1 | Tumour | .bai
-Patient 2 | Normal | .bam
-Patient 2 | Normal | .bai
-Patient 2 | Tumour | .bam
-Patient 2 | Tumour | .bai
+Alignment/ | Patient 1 | Normal | .bam
+| Patient 1 | Normal | .bai
+| Patient 1 | Tumour | .bam
+| Patient 1 | Tumour | .bai
+| Patient 2 | Normal | .bam
+| Patient 2 | Normal | .bai
+| Patient 2 | Tumour | .bam
+| Patient 2 | Tumour | .bai
 
 ```bash
 -a | --auto-start )             Automatically start the jobs on creation (default off)
