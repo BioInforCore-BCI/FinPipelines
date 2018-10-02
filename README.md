@@ -4,6 +4,7 @@ Avaliable pipelines:
 
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
+1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
 1. [Strelka_Array.sh](#strelka_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
@@ -99,6 +100,32 @@ The avaliable options are as follow:
 -s | --setup          Run the set up (cat the files together and create sample directories) (default off)
 -f | --fastq-suffix   Suffix for the fastq files (default .fastq.gz)
 -h | --help           Display this message
+```
+***
+## Hisat2_Align_Array.sh
+
+This will create a array job that will align fastq files using hisat2. 
+
+### Prerequisites
+
+The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files. You may need to cat the lanes together.
+
+i.e.
+
+Project root | raw | sample | .fastq.gz 
+--- | --- | --- | ---
+WGS_60X | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+|  |  |  | Sample1_R2.fastq.gz
+| |  | Sample2 | Sample2_R1.fastq.gz
+|  |  |  | Sample2_R2.fastq.gz
+
+The avaliable options are as follow:
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name 	           	The name for the job (default BWA_Align)
+-d | --directory 	      	The root directory for the project (default $PWD)
+-r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh38/)
+-h | --help 			Display this message and exit"
 ```
 
 ***
