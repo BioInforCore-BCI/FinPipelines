@@ -43,6 +43,8 @@ while [ "$1" != "" ]; do
 -h | --help			Display this message and exit"
                                         exit 1
                                         ;;
+	esac
+done
 
 ## Output job script in project root dir
 JOBDIR=$DIR
