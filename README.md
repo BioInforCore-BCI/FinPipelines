@@ -37,9 +37,9 @@ These scripts were written to run on 60X WGS data so the times can probably be r
 
 The avaliable options are as follow:
 ```bash
--a | --auto-start )             Automatically start the jobs on creation (default off)
--n | --name )                   The name for the job (default BWA_Align)
--d | --directory )              The root directory for the project (default $PWD)
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name                     The name for the job (default BWA_Align)
+-d | --directory                The root directory for the project (default $PWD)
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
 ```
