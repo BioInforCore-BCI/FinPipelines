@@ -85,6 +85,9 @@ export tumourBam=$DIR/Alignment/$Patient*tumour*.bam
 Chrom=(  $( cat $reference'.fai' | cut -f 1 )  )
 
 module load parallel
+module load java
+
+if ! [[ -d $DIR/VCF/Mutect2 ]]; then mkdir $DIR/VCF/Mutect2/; fi
 
 Mutect2() {
 
@@ -93,7 +96,7 @@ java -Xmx4g -jar ~/Software/GenomeAnalysisTK.jar \
         -R $reference \
         -I:tumor $tumorBAM \
         -I:normal $normalBAM \
-        -o $DIR/VCF/Mutect2/$Patient'_'$1.vcf \
+        -o $DIR/VCF/Mutect2/$Patient_$1_tmp.vcf \
 	-L $1 || exit 1 
 
 }
@@ -101,4 +104,6 @@ java -Xmx4g -jar ~/Software/GenomeAnalysisTK.jar \
 export -f Mutect2
 
 time parallel -j 8 varScan ::: ${Chrom[@]}
+
+cat 
 ' >> MUTECT2JOB
