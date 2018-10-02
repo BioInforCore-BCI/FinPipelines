@@ -119,14 +119,14 @@ i.e.
 
  Patient Prefix | Sample | .suffix 
  --- | --- | ---
- Patient 1 | Normal | .bam
-Patient 1 | Normal | .bai
-Patient 1 | Tumour | .bam
-Patient 1 | Tumour | .bai
-Patient 2 | Normal | .bam
-Patient 2 | Normal | .bai
-Patient 2 | Tumour | .bam
-Patient 2 | Tumour | .bai
+Patient_1. | normal | .bam
+Patient_1. | normal | .bai
+Patient_1. | tumour | .bam
+Patient_1. | tumour | .bai
+Patient_2. | normal | .bam
+Patient_2. | normal | .bai
+Patient_2. | tumour | .bam
+Patient_2. | tumour | .bai
 
 Options avaliable:
 ```bash
