@@ -3,10 +3,10 @@ Scripts that generate array jobs for pipelines.\
 Avaliable pipelines:
 
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
-2. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
-3. [Strelka_Array.sh](#strelka_arraysh)
-4. [MuTect2Job.sh](#mutect2jobsh)
-4. [Samtools_Index_Array.sh](#samtools_index_arraysh)
+1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
+1. [Strelka_Array.sh](#strelka_arraysh)
+1. [MuTect2Job.sh](#mutect2jobsh)
+1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 
 ## Prerequisites
 
