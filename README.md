@@ -111,8 +111,8 @@ This will build a strelka array job for matched tumour/normal pairs.
 
 The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
 The script picks bam files based on a common prefix at the start of the file.
-It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
-This is then used to find the Prefix*normal*.bam and Prefix*tumour*.bam.
+It takes all the \*normal\*.bam files and then splits at the periods and takes the first section. 
+This is then used to find the Prefix\*normal\*.bam and Prefix\*tumour\*.bam.
 The Bam files must also be indexed.
 
 i.e.
@@ -146,7 +146,7 @@ This will build a MuTect 2 array job for matched tumour/normal pairs.
 The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
 The script picks bam files based on a common prefix at the start of the file.
 It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
-This is then used to find the Prefix*normal*.bam and Prefix*tumour*.bam.
+This is then used to find the Prefix\*normal\*.bam and Prefix\*tumour\*.bam.
 The Bam files must also be indexed.
 
 i.e.
