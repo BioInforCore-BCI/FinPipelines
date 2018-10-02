@@ -6,7 +6,7 @@ Avaliable pipelines
 2. UMI-VCF_Pipline_Array_Build.sh
 3. Strelka_Array.sh
 4. Samtools_Index_Array.sh
-[Go to Real Cool Heading section](#umi-vcf_pipline_array_build.sh)
+[Go to Real Cool Heading section](##umi-vcf_pipline_array_build.sh)
 
 ## Prerequisites
 
