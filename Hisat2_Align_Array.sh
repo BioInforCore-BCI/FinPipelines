@@ -69,7 +69,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/autoScratch/weekly/hfx472/        # specify an output file - change 'outputfile.out'
+#$ -o /data/autoScratch/weekly/$USER/        # specify an output file - change 'outputfile.out'
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
 #$ -pe smp 8		# Request 8 CPU cores
