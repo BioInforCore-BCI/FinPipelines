@@ -89,7 +89,7 @@ echo "
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
 #$ -pe smp 8		# Request 8 CPU cores
-#$ -l h_rt=38:0:0	# Request 48 hour runtime (upto 240 hours)
+#$ -l h_rt=48:0:0	# Request 48 hour runtime (upto 240 hours)
 #$ -l h_vmem=4G		# Request 4GB RAM / core
 #$ -t 1-$MAX" | tee $READ1JOB $READ2JOB
 
@@ -161,7 +161,7 @@ echo "
 #$ -e /data/autoScratch/weekly/hfx472/        # specify an output file - change 'outputfile.out'
 #$ -m a			# email on abort
 #$ -pe smp 1		# Request 1 CPU cores
-#$ -l h_rt=120:0:0	# Request 48 hour runtime (upto 240 hours)
+#$ -l h_rt=240:0:0	# Request 240 hour runtime (upto 240 hours)
 #$ -l h_vmem=16G	# Request 16GB RAM / core
 #$ -t 1-$MAX
 #$ -tc 2		# only two jobs can run at the same time as the sams are massive, hopefully this will limit everything filling up.
@@ -237,8 +237,8 @@ echo "
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores
-#$ -l h_rt=120:0:0        # Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
-#$ -l h_vmem=16G         # Request 4G RAM / Core
+#$ -l h_rt=240:0:0	# Request 240 hour runtime (This is an overestimation probably. Alter based on your needs.) 
+#$ -l h_vmem=16G	# Request 16G RAM / Core
 #$ -t 1-$MAX            # run an array job of all the samples listed in FASTQ_Raw
 #$ -N BWA-$JOBNAME-Realign
 
@@ -252,7 +252,7 @@ module load java
 
 GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 PICARD=/data/home/hfx472/Software/picard.jar
-TEMP_FILES=/data/auoScratch/weekly/hfx472
+TEMP_FILES=/data/autoScratch/weekly/hfx472
 
 Samples=(ls FASTQ_Raw/*)
 ## Extract the file name at the position of the array job task ID
