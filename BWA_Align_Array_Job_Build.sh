@@ -252,7 +252,7 @@ module load java
 
 GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 PICARD=/data/home/hfx472/Software/picard.jar
-TEMP_FILES=/data/auoScratch/weekly/hfx472
+TEMP_FILES=/data/autoScratch/weekly/hfx472
 
 Samples=(ls FASTQ_Raw/*)
 ## Extract the file name at the position of the array job task ID
