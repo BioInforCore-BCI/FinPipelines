@@ -123,6 +123,8 @@ fi
 ' >> $READ1JOB 
 
 echo '
+## the ls here doesn't actually do anything except take up ${Sample[0]} in the list.
+## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.
 Samples=(ls FASTQ_Raw/*)
 Sample=${Samples[${SGE_TASK_ID}]}
 sampleName=$(echo $Sample | cut -d'/' -f 2)
@@ -174,8 +176,11 @@ MAX=$MAX
 " | tee $COMBOJOB
 
 echo '
+## the ls here doesn't actually do anything except take up ${Sample[0]} in the list.
+## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.
 Samples=(ls FASTQ_Raw/*)
 Sample=${Samples[${SGE_TASK_ID}]}
+
 sampleName=$(echo $Sample | cut -d'/' -f 2)
 read1name=$(echo $Sample/*_1.fq.gz)
 read2name=$(echo $Sample/*_2.fq.gz)
@@ -254,6 +259,8 @@ GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 PICARD=/data/home/hfx472/Software/picard.jar
 TEMP_FILES=/data/autoScratch/weekly/hfx472
 
+## the ls here doesn't actually do anything except take up ${Sample[0]} in the list.
+## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.
 Samples=(ls FASTQ_Raw/*)
 ## Extract the file name at the position of the array job task ID
 Sample=$(basename ${Samples[${SGE_TASK_ID}]})
@@ -275,7 +282,8 @@ time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD MarkDuplicates \
 	OUTPUT=$outputbammarked \
 	METRICS_FILE=$sampleName\.metrics.txt \
 	CREATE_INDEX=true \
-	VALIDATION_STRINGENCY=LENIENT
+	VALIDATION_STRINGENCY=LENIENT \
+	MAX_RECORDS_IN_RAM=5000000
 
 ## local alignment around indels
 echo "####MESS Step 4: local alignment around indels"
@@ -313,8 +321,8 @@ time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD FixMateInformation \
         OUTPUT=$realignmentfixbam \
         SO=coordinate \
         VALIDATION_STRINGENCY=LENIENT \
-        CREATE_INDEX=true
-date
+        CREATE_INDEX=true \
+	MAX_RECORDS_IN_RAM=5000000
 
 if [[ $? -eq 0 ]] && [[ -s $realignmentfixbam ]]; 
 	then 
@@ -348,7 +356,6 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 		find -name "Alignment/*$Sample*" ! -name "*recalib*" -delete
 	else
    		exit 1;
-
 fi
 ' >> $REALIGNJOB
 
