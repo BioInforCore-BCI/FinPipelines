@@ -107,3 +107,8 @@ back_distance:10,\
 weight:1,\
 min_mapping_threshold:20 > VCF/SV/$SampleName.vcf
 ' >> $LumpyJob
+
+
+if [[ $AUTOSTART -eq 1 ]]; then 
+	qsub $LumpyJob
+fi
