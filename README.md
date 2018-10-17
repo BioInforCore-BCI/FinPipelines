@@ -8,6 +8,7 @@ Avaliable pipelines:
 1. [Strelka_Array.sh](#strelka_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
+1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
 
 ## Prerequisites
 
@@ -207,4 +208,21 @@ Options:
 -n | --name			The name for the job (default BWA_Align)
 -d | --directory		The root directory for the project (default $PWD)
 -h | --help			Display this message and exit"
+```
+***
+## Lumpy-VCF_Array_Build.sh
+
+Lumpy is a structural variant caller.
+
+DIR should be the root of the project which needs to contain a folder called Alignment.
+In this folder you should have bam files for your samples with the suffix .recalib.bam. These will used to call the SVs.
+
+You need an output folder called VCF/SV/ as this is where the VCF files will be placed.
+
+Options
+
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default on)
+-n | --name                     The name for the job (default Lumpy_Array)
+-d | --directory                The root directory for the project (default $PWD)"
 ```
