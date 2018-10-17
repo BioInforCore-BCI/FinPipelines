@@ -21,6 +21,7 @@ while [ "$1" != "" ]; do
 					fi
 					;;
                 -h | --help )		echo "\
+This script will create an array job that can be run on Apocrita.
 -a | --auto-start               Automatically start the jobs on creation (default on)
 -n | --name                     The name for the job (default Lumpy_Array)
 -d | --directory                The root directory for the project (default $PWD)"
