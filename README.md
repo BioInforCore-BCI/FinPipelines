@@ -17,6 +17,7 @@ Software | Expected location on server
 <a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software 
 <a href="https://software.broadinstitute.org/gatk/download/">Genome Analysis Toolkit</a> | The GenomeAnalysisTK.jar should be in /data/home/$USER/Software
 <a href="https://github.com/Illumina/strelka/tree/master">Strelka</a> | Strelka root dir should be in /data/home/$USER/Software
+<a href="https://github.com/arq5x/lumpy-sv">Lumpy</a> | Lumpy root dir should be in /data/home/$USER/Software
 
 The rest should be handled by the modules on apocrita unless something breaks. If you're not sure try loading the modules before running your scripts or something, I don't know I'm not your mother ...
 
