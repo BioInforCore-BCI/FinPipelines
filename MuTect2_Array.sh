@@ -71,9 +71,8 @@ echo "
 #$ -e /data/home/hfx472/.JobOutput
 #$ -N MuTect2_$JOBNAME
 # TODO work out what times I need.
-
-GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
-TEMP_FILES=/data/auoScratch/weekly/hfx472
+GATK=/data/home/$USER/Software/gatk-latest
+TEMP_FILES=/data/auoScratch/weekly/$USER
 export reference=$reference
 " > $MUTECT2JOB
 
@@ -89,12 +88,11 @@ Chrom=(  $( cat $reference'.fai' | cut -f 1 )  )
 module load parallel
 module load java
 
-if ! [[ -d $DIR/VCF/Mutect2 ]]; then mkdir $DIR/VCF/Mutect2/; fi
+if ! [[ -d $DIR/VCF/Mutect2 ]]; then mkdir -p $DIR/VCF/Mutect2/; fi
 
 Mutect2() {
 
-java -Xmx4g -jar ~/Software/GenomeAnalysisTK.jar \
-        -T MuTect2 \
+$GATK --java-options "-Xmx4g" Mutect2
         -R $reference \
         -I:tumor $tumorBAM \
         -I:normal $normalBAM \
