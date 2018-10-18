@@ -19,7 +19,7 @@ fastqSuffix=.fastq.gz
 SETUP=0
 
 ##Software
-GATK=/data/home/$USER/Software/gatk-latest
+GATK=/data/home/$USER/Software/GenomeAnalysisTK.jar
 PICARD=/data/home/$USER/Software/picard.jar
 
 AUTOSTART=0
@@ -438,22 +438,19 @@ recalioutbam=Alignment/$Samples\.recalib.bam
 ## local alignment around indels
 echo "####MESS Step 4: local alignment around indels"
 echo "####MESS Step 4: first create a table of possible indels"
-$GATK --java-options "-Xmx4g" RealignerTargetCreator \
+java -Xmx4g -jar $GATK -T RealignerTargetCreator \
 	-R $reference \
 	-o $realignmentlist \
 	-I $consensusbam
-
 if ! [[ $? -eq 0 ]]; then exit 1; fi
-
 echo "####MESS Step 4: realign reads around those targets"
-$GATK --java-options "-Xmx4g -Djava.io.tmpdir=/tmp" IndelRealigner \
+java -Xmx4g -Djava.io.tmpdir=/tmp -jar $GATK \
 	-I $consensusbam \
 	-R $reference \
+	-T IndelRealigner \
 	-targetIntervals $realignmentlist \
 	-o $realignmentbam
-
 if ! [[ $? -eq 0 ]]; then exit 1; fi
-
 echo "####MESS Step 4: fix paired end mate information using Picard"
 java -Djava.io.tmpdir=/tmp -jar $PICARD FixMateInformation \
 	INPUT=$realignmentbam \
@@ -462,21 +459,17 @@ java -Djava.io.tmpdir=/tmp -jar $PICARD FixMateInformation \
 	VALIDATION_STRINGENCY=LENIENT \
 	CREATE_INDEX=true
 date
-
 if ! [[ $? -eq 0 ]]; then exit 1; fi
-
 ## base quality score recalibration
 echo "####MESS Step 5: base quality score recalibration"
-$GATK --java-options "-Xmx4g" BaseRecalibrator \
+java -Xmx4g -jar $GATK -T BaseRecalibrator \
 	-I $realignmentfixbam \
 	-R $reference \
 	-knownSites $dbsnp \
 	-o $baserecaldata
-
 if ! [[ $? -eq 0 ]]; then exit 1; fi
-
 echo "####MESS Step 5: print recalibrated reads into BAM"
-$GATK --java-options "-Xmx4g" PrintReads \
+java -jar $GATK -T PrintReads \
 	-R $reference \
 	-I $realignmentfixbam \
 	-BQSR $baserecaldata \
