@@ -253,16 +253,14 @@ echo "
 #$ -l h_vmem=16G	# Request 16G RAM / Core
 #$ -t 1-$MAX            # run an array job of all the samples listed in FASTQ_Raw
 #$ -N BWA-$JOBNAME-Realign
-
 reference=$reference
 dbsnp=$dbsnp
 " | tee $REALIGNJOB
-
 echo '
 ## There are problems with system java so load the newer version here
 module load java
 
-GATK=/data/home/hfx472/Software/gatk
+GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 PICARD=/data/home/hfx472/Software/picard.jar
 TEMP_FILES=/data/autoScratch/weekly/hfx472
 
@@ -308,7 +306,7 @@ if [[ $? -eq 0 ]] && [[ -s $outputbammarked ]];
 fi
 
 echo "####MESS Step 4: realign reads around those targets"
-time $GATK --java-options "-Xmx16g -Djava.io.tmpdir=$TEMP_FILES" \
+time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $GATK \
         -I $outputbammarked \
         -R $reference \
         -T IndelRealigner \
@@ -340,7 +338,7 @@ fi
 
 ## base quality score recalibration
 echo "####MESS Step 5: base quality score recalibration"
-time $GATK --java-options "-Xmx16g" -T BaseRecalibrator \
+time java -Xmx16g -jar $GATK -T BaseRecalibrator \
         -I $realignmentfixbam \
         -R $reference \
         -knownSites $dbsnp \
@@ -349,7 +347,7 @@ time $GATK --java-options "-Xmx16g" -T BaseRecalibrator \
 if ! [[ $? -eq 0 ]]; then exit 1; fi
 
 echo "####MESS Step 5: print recalibrated reads into BAM"
-time $GATK --java-options "-Xmx16g" -T PrintReads \
+time java -Xmx16g -jar $GATK -T PrintReads \
         -R $reference \
         -I $realignmentfixbam \
         -BQSR $baserecaldata \
@@ -365,7 +363,6 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
    		exit 1;
 fi
 ' >> $REALIGNJOB
-
 if [[ $AUTOSTART -eq 1 ]]; then 
 	echo autostarting pipeline
 	qsub $READ1JOB
