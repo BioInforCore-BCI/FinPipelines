@@ -59,7 +59,14 @@ REFDIR=$REFDIR/$REF
 idxPre=( $REFDIR/BWA/* )
 referenceindex=$( echo $idxPre | cut -d'.' -f 1 )
 reference=$( ls  $REFDIR/*.fa )
-dbsnp=$( ls $REFDIR/*no_M.vcf )
+if [ -f $REFDIR/*no_M.vcf ]; then
+	dbsnp=$( ls $REFDIR/*no_M.vcf )
+elif [ -f $REFDIR/*snp*.vcf* ]; then
+	dbsnp=$( ls $REFDIR/*snp*.vcf* )
+else
+	echo No dbsnp file found. You'll have to add it in the realign job file. Replace REPLACE-ME-WITH-DBSNP
+	dbsnp=REPLACE-ME-WITH-DBSNP
+fi
 
 ## Store job files in the job directory.
 #JOBDIR=/data/autoScratch/weekly/hfx472/
