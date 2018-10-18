@@ -64,8 +64,8 @@ if [ -f $REFDIR/*no_M.vcf ]; then
 elif [ -f $REFDIR/*snp*.vcf* ]; then
 	dbsnp=$( ls $REFDIR/*snp*.vcf* )
 else
-	echo No dbsnp file found. You'll have to add it in the realign job file. Replace REPLACE-ME-WITH-DBSNP
-	dbsnp=REPLACE-ME-WITH-DBSNP
+	echo "No dbsnp file found. You will have to add it in the realign job file. Replace REPLACE-ME-WITH-DBSNP
+	dbsnp=REPLACE-ME-WITH-DBSNP"
 fi
 
 ## Store job files in the job directory.
@@ -77,6 +77,10 @@ READ1JOB=$JOBDIR/$JOBNAME.$today.read1.sh
 READ2JOB=$JOBDIR/$JOBNAME.$today.read2.sh
 COMBOJOB=$JOBDIR/$JOBNAME.$today.combo.sh
 REALIGNJOB=$JOBDIR/$JOBNAME.$today.realign.sh
+
+if ! [[ -d $DIR/Alignment ]]; 
+	then mkdir $DIR/Alignment
+fi
 
 ## All job files
 #$READ1JOB $READ2JOB $COMBOJOB $CONVERTJOB $DUPJOB $REALIGNJOB $RECALJOB
@@ -130,7 +134,7 @@ fi
 ' >> $READ1JOB 
 
 echo '
-## the ls here doesn't actually do anything except take up ${Sample[0]} in the list.
+## the ls here does not actually do anything except take up ${Sample[0]} in the list.
 ## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.
 Samples=(ls FASTQ_Raw/*)
 Sample=${Samples[${SGE_TASK_ID}]}
@@ -183,7 +187,7 @@ MAX=$MAX
 " | tee $COMBOJOB
 
 echo '
-## the ls here doesn't actually do anything except take up ${Sample[0]} in the list.
+## the ls here does not actually do anything except take up ${Sample[0]} in the list.
 ## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.
 Samples=(ls FASTQ_Raw/*)
 Sample=${Samples[${SGE_TASK_ID}]}
@@ -256,6 +260,7 @@ echo "
 reference=$reference
 dbsnp=$dbsnp
 " | tee $REALIGNJOB
+
 echo '
 ## There are problems with system java so load the newer version here
 module load java
@@ -264,7 +269,7 @@ GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 PICARD=/data/home/hfx472/Software/picard.jar
 TEMP_FILES=/data/autoScratch/weekly/hfx472
 
-## the ls here doesn't actually do anything except take up ${Sample[0]} in the list.
+## the ls here does not actually do anything except take up ${Sample[0]} in the list.
 ## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.
 Samples=(ls FASTQ_Raw/*)
 ## Extract the file name at the position of the array job task ID
@@ -363,6 +368,7 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
    		exit 1;
 fi
 ' >> $REALIGNJOB
+
 if [[ $AUTOSTART -eq 1 ]]; then 
 	echo autostarting pipeline
 	qsub $READ1JOB
