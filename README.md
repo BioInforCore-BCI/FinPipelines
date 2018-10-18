@@ -15,9 +15,20 @@ Avaliable pipelines:
 Software | Expected location on server
 --- | ---
 <a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software 
-<a href="https://software.broadinstitute.org/gatk/download/">Genome Analysis Toolkit</a> | The GenomeAnalysisTK.jar should be in /data/home/$USER/Software
+<a href="https://software.broadinstitute.org/gatk/download/">Genome Analysis Toolkit</a> | symlink to latest GATK release called gatk-latest should be found in /data/home/$USER/Software. Make a symlink using ln -s /path/to/gatk gatk-latest
 <a href="https://github.com/Illumina/strelka/tree/master">Strelka</a> | Strelka root dir should be in /data/home/$USER/Software
 <a href="https://github.com/arq5x/lumpy-sv">Lumpy</a> | Lumpy root dir should be in /data/home/$USER/Software
+
+I am now using GATK 4 which works a little differently. You just run the gakt script and then add the name of the program
+e.g.
+```bash
+/path/to/gatk Mutect2
+```
+Pass java options like this
+```bash
+/path/to/gatk --java-options "-Xmx4g -Djava.io.tmpdir=$TEMP_FILES" Mutect2
+```
+Make sure to load java in your scripts, the old java has a memory problem that fill cause nodes to be completely loaded.
 
 The rest should be handled by the modules on apocrita unless something breaks. If you're not sure try loading the modules before running your scripts or something, I don't know I'm not your mother ...
 
