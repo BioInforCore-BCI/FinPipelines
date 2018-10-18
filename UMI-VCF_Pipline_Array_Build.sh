@@ -19,8 +19,8 @@ fastqSuffix=.fastq.gz
 SETUP=0
 
 ##Software
-GATK=/data/hfx472/Software/GenomeAnalysisTK.jar
-PICARD=/data/hfx472/Software/picard.jar
+GATK=/data/home/$USER/Software/gatk-latest
+PICARD=/data/home/$USER/Software/picard.jar
 
 AUTOSTART=0
 
@@ -438,7 +438,7 @@ recalioutbam=Alignment/$Samples\.recalib.bam
 ## local alignment around indels
 echo "####MESS Step 4: local alignment around indels"
 echo "####MESS Step 4: first create a table of possible indels"
-java -Xmx4g -jar $GATK -T RealignerTargetCreator \
+$GATK --java-options "-Xmx4g" RealignerTargetCreator \
 	-R $reference \
 	-o $realignmentlist \
 	-I $consensusbam
@@ -446,10 +446,9 @@ java -Xmx4g -jar $GATK -T RealignerTargetCreator \
 if ! [[ $? -eq 0 ]]; then exit 1; fi
 
 echo "####MESS Step 4: realign reads around those targets"
-java -Xmx4g -Djava.io.tmpdir=/tmp -jar $GATK \
+$GATK --java-options "-Xmx4g -Djava.io.tmpdir=/tmp" IndelRealigner \
 	-I $consensusbam \
 	-R $reference \
-	-T IndelRealigner \
 	-targetIntervals $realignmentlist \
 	-o $realignmentbam
 
@@ -468,7 +467,7 @@ if ! [[ $? -eq 0 ]]; then exit 1; fi
 
 ## base quality score recalibration
 echo "####MESS Step 5: base quality score recalibration"
-java -Xmx4g -jar $GATK -T BaseRecalibrator \
+$GATK --java-options "-Xmx4g" BaseRecalibrator \
 	-I $realignmentfixbam \
 	-R $reference \
 	-knownSites $dbsnp \
@@ -477,7 +476,7 @@ java -Xmx4g -jar $GATK -T BaseRecalibrator \
 if ! [[ $? -eq 0 ]]; then exit 1; fi
 
 echo "####MESS Step 5: print recalibrated reads into BAM"
-java -jar $GATK -T PrintReads \
+$GATK --java-options "-Xmx4g" PrintReads \
 	-R $reference \
 	-I $realignmentfixbam \
 	-BQSR $baserecaldata \
