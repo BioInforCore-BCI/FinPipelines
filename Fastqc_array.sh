@@ -78,9 +78,9 @@ module load fastqc
 ## Get all the sample names from FASTQ_Raw
 Files=(ls FASTQ_Raw/*/*)
 ## Extract the file name at the position of the array job task ID
-File=$(basename ${Files[${SGE_TASK_ID}]})
+File=${Files[${SGE_TASK_ID}]}
 
-fastqc -o QC/ -f $File
+fastqc -o QC/ $File
 ' >> $JobScript
 
 if [[ $AUTOSTART -eq 1 ]]; then
