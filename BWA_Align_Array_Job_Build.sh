@@ -37,11 +37,14 @@ while [ "$1" != "" ]; do
 						exit 1
 					fi
 					;;
+		-t | -trim )		TRIM=1
+					;;
 		-h | --help )		echo "\
 -a | --auto-start 		Automatically start the jobs on creation (default off)
 -n | --name 	           	The name for the job (default BWA_Align)
 -d | --directory 	      	The root directory for the project (default $PWD)
 -r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-t | -trim			
 -h | --help 			Display this message and exit"
 					exit 1
 					;;
@@ -73,6 +76,7 @@ fi
 JOBDIR=$DIR
 
 ## Names for the job files.
+$TRIMJOB=$JOBDIR/$JOBNAME.$today.trim.sh
 READ1JOB=$JOBDIR/$JOBNAME.$today.read1.sh
 READ2JOB=$JOBDIR/$JOBNAME.$today.read2.sh
 COMBOJOB=$JOBDIR/$JOBNAME.$today.combo.sh
@@ -84,6 +88,51 @@ fi
 
 ## All job files
 #$READ1JOB $READ2JOB $COMBOJOB $CONVERTJOB $DUPJOB $REALIGNJOB $RECALJOB
+
+if [[ TRIM -eq 1 ]]; then 
+
+	####################
+	# Trimming Job
+	####################
+
+	echo "
+	#!/bin/sh
+	#$ -wd $DIR		# use current working directory
+	#$ -V			# this makes it verbose
+	#$ -o $jobOutputDir	# specify an output file
+	#$ -j y			# and put all output (inc errors) into it
+	#$ -m a			# Email on abort
+	#$ -pe smp 1		# Request 1 CPU cores
+	#$ -l h_rt=8:0:0	# Request 4 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
+	#$ -l h_vmem=4G		# Request 4G RAM / Core
+	#$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
+	#$ -N BWA-$JOBNAME-Trim_Job
+	" > $TRIMJOB
+
+	echo '
+	module load trimgalore
+	## Get all the sample names from FASTQ_Raw
+	Samples=(ls FASTQ_Raw/*)
+	## Extract the file name at the position of the array job task ID
+	Sample=$(basename ${Samples[${SGE_TASK_ID}]})
+	## Make directory for output
+	mkdir FASTQ_TRIM/$Sample
+	echo $Sample/*R1.fastq;
+	# Trim adapters using trim_galore
+	time trim_galore --paired --retain_unpaired --illumina --gzip \
+		--fastqc_args "-o QC/TRIM/" \
+		-o FASTQ_TRIM/$Sample/ \
+		FASTQ_Raw/$Sample/*R1.fastq.gz FASTQ_Raw/$Sample/*R2.fastq.gz
+	# As long as the trim runs successfully run some clean up.
+	if [[ $? -eq 0 ]]; then
+		mv FASTQ_Raw FASTQ_Old
+		mv FASTQ_Trim FASTQ_Raw
+	fi
+	' >> $TRIMJOB
+
+else
+	echo No trimming selected
+fi
 
 ####################
 ## Make Sai
@@ -371,6 +420,10 @@ fi
 
 if [[ $AUTOSTART -eq 1 ]]; then 
 	echo autostarting pipeline
-	qsub $READ1JOB
-	qsub $READ2JOB
+	if [[ TRIM -eq 1 ]]; then
+		qsub $TRIMJOB
+	else
+		qsub $READ1JOB
+		qsub $READ2JOB
+	fi
 fi
