@@ -9,6 +9,7 @@ Avaliable pipelines:
 1. [MuTect2_Array.sh](#mutect2_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
+1. [Fastqc_array.sh](#fastqc_arraysh)
 
 ## Prerequisites
 
@@ -46,11 +47,12 @@ These scripts were written to run on 60X WGS data so the times can probably be r
 
 The avaliable options are as follow:
 ```bash
--a | --auto-start               Automatically start the jobs on creation (default off)
--n | --name                     The name for the job (default BWA_Align)
--d | --directory                The root directory for the project (default $PWD)
--r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
--h | --help                     Display this message and exit"
+-a | --auto-start	Automatically start the jobs on creation (default off)
+-n | --name		The name for the job (default BWA_Align)
+-d | --directory	The root directory for the project (default $PWD)
+-r | --refdir		Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-t | -trim		Creates a job to trim the samples. Autostart will submit this job, not make sai (default off)
+-h | --help		Display this message and exit"
 ```
 If the script is set to autorun then it will load the SAI arrays straight away, otherwise the job files will just sit there waiting for you. The jobs *should* be submitted to the server as they previous job finishes but keep an eye on it. 
 
@@ -227,5 +229,34 @@ Options
 ```bash
 -a | --auto-start               Automatically start the jobs on creation (default on)
 -n | --name                     The name for the job (default Lumpy_Array)
+-d | --directory                The root directory for the project (default $PWD)"
+```
+***
+
+## Fastqc_array.sh
+
+Fastqc can be used to assess the quality of FASTQ, Sam and Bam files.
+
+The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files.
+
+OR
+
+if MODE is set to bam you'll need a directory called Alignment that contains bam files. (The script will analyse all these bam files.)
+
+i.e.
+
+Project root | raw | sample | .fastq.gz 
+--- | --- | --- | ---
+RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+|  |  |  | Sample1_R2.fastq.gz
+| |  | Sample2 | Sample2_R1.fastq.gz
+|  |  |  | Sample2_R2.fastq.gz
+
+Options
+
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default on)
+-n | --name                     The name for the job (default Lumpy_Array)
+-m | --mode			The mode for the job (bam|fastq) (default fastq)
 -d | --directory                The root directory for the project (default $PWD)"
 ```
