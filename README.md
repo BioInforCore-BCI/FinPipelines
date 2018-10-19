@@ -237,7 +237,11 @@ Options
 
 Fastqc can be used to assess the quality of FASTQ, Sam and Bam files.
 
-The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files. You may need to cat the lanes together.
+The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files.
+
+OR
+
+if MODE is set to bam you'll need a directory called Alignment that contains bam files. (The script will analyse all these bam files.)
 
 i.e.
 
