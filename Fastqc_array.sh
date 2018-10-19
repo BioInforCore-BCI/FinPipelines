@@ -53,6 +53,7 @@ MAX=$(echo ${#FILES[@]})
 MAX=$( expr $MAX - 1 )
 
 JobScript=$DIR/Fastqc-$today-array.sh
+jobOutputDir=/data/autoScratch/weekly/hfx472/
 
 echo "
 #!/bin/sh
