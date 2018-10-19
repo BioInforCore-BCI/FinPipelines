@@ -2,7 +2,7 @@
 today=`date +%Y-%m-%d`
 
 DIR=$PWD
-JOBNAME=BWA_Align
+JOBNAME=FASTQC
 MODE=fastq
 REFDIR=/data/BCI-Haemato/Refs/
 
@@ -29,7 +29,7 @@ while [ "$1" != "" ]; do
 					;;
 		-h | --help )		echo "\
 -a | --auto-start	Automatically start the jobs on creation (default off)
--n | --name		The name for the job (default BWA_Align)
+-n | --name		The name for the job (default FASTQC)
 -d | --directory	The root directory for the project (default $PWD)
 -m | --mode		Switches the files to run on (default fastq)
 -h | --help		Display this message and exit"
