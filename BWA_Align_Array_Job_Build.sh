@@ -44,7 +44,7 @@ while [ "$1" != "" ]; do
 -n | --name 	           	The name for the job (default BWA_Align)
 -d | --directory 	      	The root directory for the project (default $PWD)
 -r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
--t | -trim			
+-t | -trim			Creates a job to trim the samples. Autostart will submit this job, not make sai (default off)
 -h | --help 			Display this message and exit"
 					exit 1
 					;;
