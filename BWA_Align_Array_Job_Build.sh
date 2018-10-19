@@ -124,9 +124,8 @@ if [[ TRIM -eq 1 ]]; then
 		-o FASTQ_TRIM/$Sample/ \
 		FASTQ_Raw/$Sample/*R1.fastq.gz FASTQ_Raw/$Sample/*R2.fastq.gz
 	# As long as the trim runs successfully run some clean up.
-	if [[ $? -eq 0 ]]; then
-		mv FASTQ_Raw FASTQ_Old
-		mv FASTQ_Trim FASTQ_Raw
+	if ! [[ $? -eq 0 ]]; then
+		exit 1
 	fi
 	' >> $TRIMJOB
 
