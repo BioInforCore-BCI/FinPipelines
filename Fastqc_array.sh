@@ -80,7 +80,7 @@ Files=(ls FASTQ_Raw/*/*)
 File=$(basename ${Files[${SGE_TASK_ID}]})
 
 fastqc -o QC/ -f $File
-' > $JobScript
+' >> $JobScript
 
 if [[ $AUTOSTART -eq 1 ]]; then
 	qsub $JobScript
