@@ -26,7 +26,7 @@ while [ "$1" != "" ]; do
                                         ;;
 		-m | --mode )		shift
 					MODE=$1
-					echo MODE set to $1
+					echo MODE set to $MODE
 					;;
 		-h | --help )		echo "\
 -a | --auto-start	Automatically start the jobs on creation (default off)
