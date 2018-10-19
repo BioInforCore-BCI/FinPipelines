@@ -9,6 +9,7 @@ Avaliable pipelines:
 1. [MuTect2_Array.sh](#mutect2_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
+1. [Fastqc_array.sh](#fastqc_arraysh)
 
 ## Prerequisites
 
