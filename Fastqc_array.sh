@@ -4,8 +4,7 @@ today=`date +%Y-%m-%d`
 DIR=$PWD
 JOBNAME=FASTQC
 MODE=fastq
-REFDIR=/data/BCI-Haemato/Refs/
-
+$jobOutputDir=/data/autoScratch/weekly/$USER
 AUTOSTART=0
 
 while [ "$1" != "" ]; do
@@ -41,9 +40,9 @@ while [ "$1" != "" ]; do
 done
 
 if [[ $MODE == fastq ]]; then
-	FILEDIR=FASTQ_Raw/*/*
+	FILEDIR=$DIR/FASTQ_Raw/*/*
 elif [[ $MODE == bam ]]; then
-	FILEDIR=Alignment/*.bam
+	FILEDIR=$DIR/Alignment/*.bam
 else
 	echo Invalid MODE selected. Please choose either fastq or bam
 fi
