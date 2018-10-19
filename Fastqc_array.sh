@@ -40,12 +40,9 @@ while [ "$1" != "" ]; do
         shift
 done
 
-echo MODE set to $MODE
 if [[ $MODE == fastq ]]; then
-	echo 'will set FILEDIR to FASTQ_Raw/*/*' 
 	FILEDIR=FASTQ_Raw/*/*
 elif [[ $MODE == bam ]]; then
-	echo #will set FILEDIR to Alignment/*.bam'
 	FILEDIR=Alignment/*.bam
 else
 	echo Invalid MODE selected. Please choose either fastq or bam
