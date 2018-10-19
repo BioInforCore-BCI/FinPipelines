@@ -26,6 +26,7 @@ while [ "$1" != "" ]; do
                                         ;;
 		-m | --mode )		shift
 					MODE=$1
+					echo MODE set to $1
 					;;
 		-h | --help )		echo "\
 -a | --auto-start	Automatically start the jobs on creation (default off)
@@ -42,7 +43,7 @@ done
 if [[ $MODE -eq fastq ]]; then
 	FILEDIR=FASTQ_Raw/*/*
 elif [[ $MODE -eq bam ]]; then
-	FILEDIR=FASTQ_Raw/*/*.bam
+	FILEDIR=Alignment/*.bam
 else
 	echo Invalid MODE selected. Please choose either fastq or bam
 fi
