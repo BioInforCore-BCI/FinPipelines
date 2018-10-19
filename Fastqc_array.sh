@@ -3,11 +3,7 @@ today=`date +%Y-%m-%d`
 
 DIR=$PWD
 JOBNAME=BWA_Align
-FILES=(ls FASTQ_Raw/*/*)
-MAX=$(echo ${#FILES[@]})
-MAX=$( expr $MAX - 1 )
-TotalSAI=$( expr $MAX + $MAX )
-
+MODE=fastq
 REFDIR=/data/BCI-Haemato/Refs/
 
 AUTOSTART=0
@@ -28,16 +24,33 @@ while [ "$1" != "" ]; do
                                                 exit 1
                                         fi
                                         ;;
+		-m | --mode )		shift
+					MODE=$1
+					;;
 		-h | --help )		echo "\
--a | --auto-start 		Automatically start the jobs on creation (default off)
--n | --name 	           	The name for the job (default BWA_Align)
--d | --directory 	      	The root directory for the project (default $PWD)
--h | --help 			Display this message and exit"
+-a | --auto-start	Automatically start the jobs on creation (default off)
+-n | --name		The name for the job (default BWA_Align)
+-d | --directory	The root directory for the project (default $PWD)
+-m | --mode		Switches the files to run on (default fastq)
+-h | --help		Display this message and exit"
 					exit 1
 					;;
         esac
         shift
 done
+
+if [[ $MODE -eq fastq ]]; then
+	FILEDIR=FASTQ_Raw/*/*
+elif [[ $MODE -eq bam ]]; then
+	FILEDIR=FASTQ_Raw/*/*.bam
+else
+	echo Invalid MODE selected. Please choose either fastq or bam
+fi
+
+# Get the number of files
+FILES=( ls $FILEDIR )
+MAX=$(echo ${#FILES[@]})
+MAX=$( expr $MAX - 1 )
 
 JobScript=$DIR/Fastqc-$today-array.sh
 
@@ -52,7 +65,9 @@ echo "
 #$ -l h_rt=48:0:0	# Request 48 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
 #$ -l h_vmem=4G		# Request 4G RAM / Core
 #$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
-#$ -N fastqc-$JOBNAME " > $JobScript
+#$ -N fastqc-$JOBNAME
+
+FILEDIR=$FILEDIR" > $JobScript
 
 echo '
 
@@ -60,10 +75,14 @@ if ! [[ -f QC/ ]]; then mkdir QC; fi
 
 module load fastqc
 ## Get all the sample names from FASTQ_Raw
-FASTQS=(ls FASTQ_Raw/*/*)
+Files=(ls FASTQ_Raw/*/*)
 ## Extract the file name at the position of the array job task ID
-FASTQ=$(basename ${FASTQS[${SGE_TASK_ID}]})
+File=$(basename ${Files[${SGE_TASK_ID}]})
 
-fastqc -o QC/ -f $FASTQ
+fastqc -o QC/ -f $File
 ' > $JobScript
+
+if [[ $AUTOSTART -eq 1 ]]; then
+	qsub $JobScript
+fi
 
