@@ -160,14 +160,12 @@ Sample=$(basename ${Samples[${SGE_TASK_ID}]})
 ## Make directory for output
 mkdir FASTQ_TRIM/$Sample
 
-echo $folder/*R1.fastq;
+echo $Sample/*R1.fastq;
 # Trim adapters using trim_galore
 time trim_galore --paired --retain_unpaired --illumina --gzip \
-	# re run fastqc
-	--fastqc_args "-o QC/TRIM/" \
-	# Ouput the trimmed files into 
-	-o FASTQ_TRIM/$Sample/ \
-	$folder/*R1.fastq.gz $folder/*R2.fastq.gz
+        --fastqc_args "-o QC/TRIM/" \
+        -o FASTQ_TRIM/$Sample/ \
+        FASTQ_Raw/$Sample/*R1.fastq.gz FASTQ_Raw/$Sample/*R2.fastq.gz
 
 # As long as the trim runs successfully run some clean up.
 if [[ $? -eq 0 ]]; then
