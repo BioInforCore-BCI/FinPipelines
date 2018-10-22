@@ -411,7 +411,7 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 		rm $realignmentfixbam \
         	$realignmentlist \
         	$baserecaldata
-		find -name "Alignment/*$Sample*" ! -name "*recalib*" -delete
+		find Alignment/ -name "*$Sample*" ! -name "*recalib*" -delete
 	else
    		exit 1;
 fi
