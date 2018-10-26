@@ -102,26 +102,26 @@ varFiltJob=$jobOutputDir$jobName\.08.varFilt.$today\.sh
 ##
 
 if [[ SETUP -eq 1 ]] && ! [[ -d FASTQ_TRIM ]] && ! [[ -d FASTQ_Con ]]; then
-
 	# I like to keep each samples FASTQ file in a directory called SAMPLE NAME
 	# This makes it easy to grab sample names in the future as you just get all the directories in the FASTQ folder
 	for file in $DIR/FASTQ_Raw/*L001_R1*;
 
 		# Get the name of the sample by cutting off the rest of the filename for lane 1 read 1
-	        do sample=$(basename $file | awk -F '_L00' {print $1} );
-	        mkdir $DIR/FASTQ_Raw/$sample;
-	        cat $DIR/FASTQ_Raw/$sample*R1* > $DIR/FASTQ_Raw/$sample/$sample_R1.fastq.gz;
-	        cat $DIR/FASTQ_Raw/$sample*R2* > $DIR/FASTQ_Raw/$sample/$sample_UMI.fastq.gz;
-	        cat $DIR/FASTQ_Raw/$sample*R3* > $DIR/FASTQ_Raw/$sample/$sample_R2.fastq.gz;
-		rm $DIR/FASTQ_Raw/$sample*$fastqSuffix
-	
-	done
+		do sample=$(basename $file | awk -F '_L00' '{print $1}' );
+		echo $sample
+		
+		mkdir $DIR/FASTQ_Raw/$sample;
+		cat $DIR/FASTQ_Raw/$sample*R1* > $DIR/FASTQ_Raw/$sample/$sample\_R1.fastq.gz;
+	        cat $DIR/FASTQ_Raw/$sample*R2* > $DIR/FASTQ_Raw/$sample/$sample\_UMI.fastq.gz;
+	        cat $DIR/FASTQ_Raw/$sample*R3* > $DIR/FASTQ_Raw/$sample/$sample\_R2.fastq.gz;
 
-	if ! [[ -d $DIR/FASTQ_TRIM ]] && ! [[ -d $DIR/FASTQ_Con ]]; then
-		mkdir $DIR/FASTQ_TRIM;
-		mkdir -p $DIR/QC/TRIM;
-	fi
-	
+		if [[ $? -eq 0 ]]; 
+			then rm $DIR/FASTQ_Raw/$sample*$fastqSuffix
+		else 
+			exit 1;
+		fi
+
+	done
 fi
 
 # Guess at the max number of samples TODO I should probably change this to be input on formation as this requires the samples to have been sorted already.
@@ -151,6 +151,9 @@ echo "
 
 echo '
 module load trimgalore
+
+mkdir $DIR/FASTQ_TRIM;
+mkdir -p $DIR/QC/TRIM;
 
 ## Get all the sample names from FASTQ_Raw
 Samples=(ls FASTQ_Raw/*)
