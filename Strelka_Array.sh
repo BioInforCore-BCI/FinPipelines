@@ -96,8 +96,8 @@ echo Configuring Strelka workflow
 ## Output directory is set to be the Patient directory inside of the VCF file.
 ## if it fails, exit with status 1
 time $STRELKA \
-        --normalBam $normalBAM \
-        --tumorBam $tumourBAM \
+        --normalBam $normalBam \
+        --tumorBam $tumourBam \
         --ref $reference  \
         --runDir $DIR/VCF/$Patient || exit 1
 
