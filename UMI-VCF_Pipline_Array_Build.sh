@@ -143,7 +143,7 @@ echo "
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
-#$ -l h_rt=4:0:0	# Request 4 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
+#$ -l h_rt=24:0:0	# Request 4 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
 #$ -l h_vmem=4G		# Request 4G RAM / Core
 #$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
 #$ -N $jobName-Trim_Job
@@ -236,16 +236,16 @@ echo "
 #$ -o $jobOutputDir	# specify an output file
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
-#$ -pe smp 8		# Request 1 CPU cores
-#$ -l h_rt=2:0:0	# Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
-#$ -l h_vmem=12G		# Request 4G RAM / Core
+#$ -pe smp 1		# Request 1 CPU cores
+#$ -l h_rt=4:0:0	# Request 4 hour runtime (This is an overestimation probably. Alter based on your needs.) 
+#$ -l h_vmem=24G		# Request 4G RAM / Core
 #$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
 #$ -N $jobName-fgbio_Job" > $fgbioJob
 
 echo '
 module load java
 ## Set fgbio parameters - NB this needs to have enough ram to load the whole fastq files.
-fgbio=\"java -Xmx12g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /data/home/hfx472/Software/fgbio-0.6.1.jar --compression=0\"
+fgbio=\"java -Xmx24g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /data/home/hfx472/Software/fgbio-0.6.1.jar --compression=0\"
 
 ## Get all the sample names from FASTQ_TRIM
 Samples=(ls FASTQ_TRIM/*)
@@ -330,7 +330,7 @@ echo "
 #$ -o /data/autoScratch/weekly/hfx472   # specify an output file
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
-#$ -l h_rt=2:0:0	# Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
+#$ -l h_rt=8:0:0	# Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
 #$ -l h_vmem=12G	# Request 4G RAM / Core
 #$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
 #$ -N $jobName-bam2fastq
@@ -408,7 +408,7 @@ echo "
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores
-#$ -l h_rt=24:0:0        # Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
+#$ -l h_rt=24:0:0        # Request 24 hour runtime (This is an overestimation probably. Alter based on your needs.) 
 #$ -l h_vmem=4G         # Request 4G RAM / Core
 #$ -t 1-$MAX            # run an array job of all the samples listed in FASTQ_Raw
 #$ -N $jobName-Realign_Job
