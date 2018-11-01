@@ -493,28 +493,26 @@ echo "
 #$ -pe smp 8            # Request 1 CPU cores
 #$ -l h_rt=24:0:0        # Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
 #$ -l h_vmem=4G         # Request 4G RAM / Core
+#$ -t 1-$MAX
 #$ -N $jobName-Varscan_Job
 
-export BED=$BED
-
+BED=$BED
 " > $varScanJob
 
-
 echo '
-#!/bin/bash
-module load parallel
 module load samtools
 module load annovar
 module load java
 
-
-varScan() {
-## get Bam file only. 
-sample=$(basename $1 | cut -d'.' -f 1)
-
 ## Constants
 varScan=/data/home/hfx472/Software/VarScan/VarScan.v2.4.3.jar
 refGenome=/data/BCI-Haemato/Refs/GRCh37/hg37.fa
+
+## get recalibrated Bam file
+Samples=(ls FASTQ_Con/*)
+## Extract the file name at the position of the array job task ID
+Sample=$(basename ${Samples[${SGE_TASK_ID}]})
+echo $Sample
 
 ## Output Files
 outSnp=VCF/$sample\_snp.vcf
@@ -522,8 +520,7 @@ outIndel=VCF/$sample\_indel.vcf
 outSnp_fil=VCF/$sample\.pass.snp.vcf
 outIndel_fil=VCF/$sample\.pass.indel.vcf
 
-
-samtools mpileup -B -q 40 -l $BED -f $refGenome $1 |
+time samtools mpileup -B -q 40 -l $BED -f $refGenome $Sample |
 java -jar $varScan mpileup2snp \
 	--min-coverage 20 \
         --min-avg-qual 20 \
@@ -533,7 +530,7 @@ java -jar $varScan mpileup2snp \
         --strand-filter 1 \
         --output-vcf 1 > $outSnp
 
-samtools mpileup -B -q 40 -l $BED -f $refGenome $1 |
+time samtools mpileup -B -q 40 -l $BED -f $refGenome $Sample |
 java -jar $varScan mpileup2indel \
 	--min-coverage 20 \
         --min-avg-qual 20 \
@@ -546,11 +543,6 @@ java -jar $varScan mpileup2indel \
 echo converting to annovar input 
 convert2annovar.pl --format vcf4 $outSnp --includeinfo --filter PASS --withzyg --outfile $outSnp_fil
 convert2annovar.pl --format vcf4 $outIndel --includeinfo --filter PASS --withzyg --outfile $outIndel_fil
-}
-
-export -f varScan
-
-time find Alignment/ -name "*recalib.bam*"  | parallel -j 8 varScan
 ' >> $varScanJob
 
 echo "
