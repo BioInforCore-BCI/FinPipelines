@@ -44,6 +44,7 @@ while [ "$1" != "" ]; do
                                         exit 1
                                         ;;
 	esac
+	shift
 done
 
 ## Output job script in project root dir
@@ -62,53 +63,39 @@ MAX=$( expr $MAX - 1 )
 
 echo "
 #!/bin/sh
-#$ -cwd           # Set the working directory for the job to the current directory
-#$ -pe smp 8      # Request 1 cores - running multiple cores seems to cause issues.
-#$ -l h_rt=48:0:0 # Request 24 hour runtime
+#$ -wd $DIR      # Set the working directory for the job to the current directory
+#$ -pe smp 1      # Request 1 cores - running multiple cores seems to cause issues.
+#$ -l h_rt=120:0:0 # Request 120 hour runtime
 #$ -l h_vmem=4G   # Request 4GB RAM per core
 #$ -m a
-#$ -o /data/home/hfx472/.JobOutput
-#$ -e /data/home/hfx472/.JobOutput
+#$ -o /data/autoScratch/weekly/hfx472/
+#$ -j y
+#$ -t 1-$MAX
 #$ -N MuTect2_$JOBNAME
 # TODO work out what times I need.
 
 GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
 TEMP_FILES=/data/auoScratch/weekly/$USER
-export reference=$reference
+reference=$reference
 " > $MUTECT2JOB
 
 echo '
+normalBams=(ls Alignment/*normal*.bam)
+Patient=$(basename ${normalBams[${SGE_TASK_ID}]} | cut -d'.' -f 1)
+normalBam=Alignment/$Patient*normal*.bam
+tumourBam=Alignment/$Patient*tumour*.bam
 
-normalBams=(ls $DIR/Alignment/*normal*.bam)
-export Patient=$(basename ${normalBams[${SGE_TASK_ID}]} | cut -d'.' -f 1)
-export normalBam=$DIR/Alignment/$Patient*normal*.bam
-export tumourBam=$DIR/Alignment/$Patient*tumour*.bam
-
-Chrom=(  $( cat $reference'.fai' | cut -f 1 )  )
-
-module load parallel
 module load java
 
-if ! [[ -d $DIR/VCF/Mutect2 ]]; then mkdir -p $DIR/VCF/Mutect2/; fi
-
-Mutect2() {
+if ! [[ -d VCF/Mutect2 ]]; then mkdir -p VCF/Mutect2/; fi
 
 java -Xmx4g -jar ~/Software/GenomeAnalysisTK.jar \
         -T MuTect2 \
         -R $reference \
-        -I:tumor $tumorBAM \
-        -I:normal $normalBAM \
-        -o $DIR/VCF/Mutect2/$Patient_$1_tmp.vcf \
-	-L $1 || exit 1 
+        -I:tumor $tumourBam \
+        -I:normal $normalBam \
+        -o VCF/Mutect2/$Patient.vcf || exit 1 
 
-}
-
-export -f Mutect2
-
-time parallel -j 8 varScan ::: ${Chrom[@]}
-
-cat $DIR/VCF/Mutect2/$Patient_1_tmp.vcf | grep -e "^#" > $DIR/VCF/Mutect2/$Patient.vcf
-cat $DIR/VCF/Mutect2/$Patient*tmp.vcf | grep -ve "^#" >> $DIR/VCF/Mutect2/$Patient.vcf
 ' >> $MUTECT2JOB
 
 if [[ $AUTOSTART -eq 1 ]]; then
