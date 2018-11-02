@@ -227,7 +227,7 @@ Patient_2. | normal | .bai
 Patient_2. | tumour | .bam
 Patient_2. | tumour | .bai
 
-This will run HLA typing on your samples using Polysolver. Polysolver can be installed through conda in a new environment. This was the easiest was for me to get it working. Make sure your condarc has these:
+This will run HLA typing on your samples using Polysolver. Polysolver can be installed through conda in a new environment. This was the easiest was for me to get it working. Make sure your ~/.condarc has these:
 ```bash
 channels:
   - defaults
