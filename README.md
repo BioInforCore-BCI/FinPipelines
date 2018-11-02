@@ -203,7 +203,39 @@ Options avaliable:
 -h | --help			Display this message and exit
 
 ***
+## Polysolver_Array.sh
 
+Pre-recs: See above
+
+This will run HLA typing on your samples using Polysolver. Polysolver can be installed through conda in a new environment. This was the easiest was for me to get it working. Make sure your condarc has these:
+```bash
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+  - vacation
+```
+Then run
+```bash
+## Create new env called polysolver and install hla-polysolved in it.
+conda create -n polysolver -c vacation hla-polysolver
+```
+This will create a new conda environment you can access using:
+
+```bash
+source activate polysolver
+```
+This is how the array builder works, so if you make a different environment name I'm going to have to write in a new argument to specific the environment and that'll be a whole thing.
+
+Options: 
+```bash
+-a | --auto-start		Automatically start the jobs on creation (default off)
+-n | --name			The name for the job (default BWA_Align)
+-d | --directory		The root directory for the project (default $PWD)
+-r | --ref			The reference used to align the bam (default hg19)
+```
+
+***
 ## Samtools_Index_Array.sh
 
 Does what it says in the name, will build and submit an array script that will index all bam files in Alignment/
