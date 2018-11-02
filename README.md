@@ -7,6 +7,7 @@ Avaliable pipelines:
 1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
 1. [Strelka_Array.sh](#strelka_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
+1. [Polysolver_Array.sh](#polysolver_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
 1. [Fastqc_array.sh](#fastqc_arraysh)
@@ -205,7 +206,26 @@ Options avaliable:
 ***
 ## Polysolver_Array.sh
 
-Pre-recs: See above
+### Prerequisites
+
+The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
+The script picks bam files based on a common prefix at the start of the file.
+It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
+This is then used to find the Prefix\*normal\*.bam and Prefix\*tumour\*.bam.
+The Bam files must also be indexed.
+
+i.e.
+
+Patient Prefix | Sample | .suffix 
+ --- | --- | ---
+Patient_1. | normal | .bam
+Patient_1. | normal | .bai
+Patient_1. | tumour | .bam
+Patient_1. | tumour | .bai
+Patient_2. | normal | .bam
+Patient_2. | normal | .bai
+Patient_2. | tumour | .bam
+Patient_2. | tumour | .bai
 
 This will run HLA typing on your samples using Polysolver. Polysolver can be installed through conda in a new environment. This was the easiest was for me to get it working. Make sure your condarc has these:
 ```bash
