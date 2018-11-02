@@ -6,7 +6,7 @@ JOBNAME=Polysolver_Pipeline_$DIR
 ## Location of reference files
 REFDIR=/data/BCI-Haemato/Refs/
 ## By Default use the hg37 reference genome
-REF=GRCh37
+REF=hg19
 ScirptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 AUTOSTART=0
 
@@ -26,20 +26,15 @@ while [ "$1" != "" ]; do
                                                 exit 1
                                         fi
                                         ;;
-                -r | --refdir )         shift
-                                        if [[ -d $REFDIR/$1 ]]; then
-                                                REF=$1
-                                                echo reference $REF will be used
-                                        else
-                                                echo Reference Not Found
-                                                exit 1
-                                        fi
+                -r | --ref )         shift
+                                        REF=$1
+                                        echo reference $REF will be used
                                         ;;
                 -h | --help )           echo "\
 -a | --auto-start		Automatically start the jobs on creation (default off)
 -n | --name			The name for the job (default BWA_Align)
 -d | --directory		The root directory for the project (default $PWD)
--r | --refdir			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-r | --ref			The reference used to align the bam (default hg19)
 -h | --help			Display this message and exit"
                                         exit 1
                                         ;;
@@ -50,11 +45,6 @@ done
 ## Output job script in project root dir
 JOBDIR=$DIR
 POLYJOB=$JOBDIR/$JOBNAME-$today-Polysolver.sh
-
-## Location of correct version of reference
-REFDIR=$REFDIR/$REF
-## This automatically gets the correct reference as long as it is the only .fa file in the directory.
-reference=$( ls  $REFDIR/*.fa )
 
 # Get max number of files. 
 normalBams=(ls $DIR/Alignment/*normal*.bam)
@@ -72,6 +62,8 @@ echo "
 #$ -j y
 #$ -t 1-$MAX
 #$ -N $JobName\_Polysolver
+
+Ref=$REF
 " > $POLYJOB
 
 echo '
@@ -89,7 +81,7 @@ if ! [[ -d HLA_Type/$Patient ]]; then mkdir HLA_Type/$Patient ; fi
 
 source activate polysolver
 
-time shell_call_hla_type $normalBam Unknown 1 hg19 STDFQ 0 HLA_Type/$Patient
+time shell_call_hla_type $normalBam Unknown 1 $Ref STDFQ 0 HLA_Type/$Patient
 
 mv HLA_Type/$Patient/winners.hla.txt HLA_Type/$Patient/Normal.hla.txt
 
