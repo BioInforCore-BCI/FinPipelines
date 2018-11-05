@@ -7,6 +7,7 @@ Avaliable pipelines:
 1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
 1. [Strelka_Array.sh](#strelka_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
+1. [Polysolver_Array.sh](#polysolver_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
 1. [Fastqc_array.sh](#fastqc_arraysh)
@@ -203,7 +204,58 @@ Options avaliable:
 -h | --help			Display this message and exit
 
 ***
+## Polysolver_Array.sh
 
+### Prerequisites
+
+The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
+The script picks bam files based on a common prefix at the start of the file.
+It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
+This is then used to find the Prefix\*normal\*.bam and Prefix\*tumour\*.bam.
+The Bam files must also be indexed.
+
+i.e.
+
+Patient Prefix | Sample | .suffix 
+ --- | --- | ---
+Patient_1. | normal | .bam
+Patient_1. | normal | .bai
+Patient_1. | tumour | .bam
+Patient_1. | tumour | .bai
+Patient_2. | normal | .bam
+Patient_2. | normal | .bai
+Patient_2. | tumour | .bam
+Patient_2. | tumour | .bai
+
+This will run HLA typing on your samples using Polysolver. Polysolver can be installed through conda in a new environment. This was the easiest was for me to get it working. Make sure your ~/.condarc has these:
+```bash
+channels:
+  - defaults
+  - bioconda
+  - conda-forge
+  - vacation
+```
+Then run
+```bash
+## Create new env called polysolver and install hla-polysolved in it.
+conda create -n polysolver -c vacation hla-polysolver
+```
+This will create a new conda environment you can access using:
+
+```bash
+source activate polysolver
+```
+This is how the array builder works, so if you make a different environment name I'm going to have to write in a new argument to specific the environment and that'll be a whole thing.
+
+Options: 
+```bash
+-a | --auto-start		Automatically start the jobs on creation (default off)
+-n | --name			The name for the job (default BWA_Align)
+-d | --directory		The root directory for the project (default $PWD)
+-r | --ref			The reference used to align the bam (default hg19)
+```
+
+***
 ## Samtools_Index_Array.sh
 
 Does what it says in the name, will build and submit an array script that will index all bam files in Alignment/
