@@ -347,14 +347,14 @@ Samples=(ls FASTQ_TRIM/*)
 sampleName=$(basename ${Samples[${SGE_TASK_ID}]})
 echo $Sample
 
-if ! [[ -d FASTQ_Con/$sampleName ]]; then mkdir FASTQ_Con; fi
+if ! [[ -d FASTQ_Con/$sampleName ]]; then mkdir FASTQ_Con/$sampleName; fi
 
 echo fastq generation starting
 if ! [[ -f FASTQ_Con/$sampleName\_R1.fastq ]] && ! [[ -f FASTQ_Con/$sampleName\_R2.fastq ]]; then
 	java -jar ~/Software/picard.jar SamToFastq \
 		I=Alignment/$sampleName\.fgcon.bam \
-		FASTQ=FASTQ_Con/$sampleName\_R1.fastq.gz \
-		SECOND_END_FASTQ=FASTQ_Con/$sampleName\_R2.fastq.gz \
+		FASTQ=FASTQ_Con/$sampleName/$sampleName\_R1.fastq.gz \
+		SECOND_END_FASTQ=FASTQ_Con/$sampleName/$sampleName\_R2.fastq.gz \
 		VALIDATION_STRINGENCY=LENIENT
 fi
 if [[ $? -eq 0 ]]; then
