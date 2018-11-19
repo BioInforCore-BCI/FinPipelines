@@ -59,7 +59,7 @@ while [ "$1" != "" ]; do
 					fastqSuffix=$1
 					;;
 		-h | --help )		echo "\
--a | --autostart	Automaticall start the job
+-a | --autostart	Automaticall start the jobs, holding jobs so they run in the correct order
 -n | --name		Sets the job name (default - UMI-VCF-$PWD)
 -b | --bed		Bed file for the project (default none - change this!)
 -d | --directory	Root directory for the project
@@ -86,7 +86,7 @@ dbsnp=$( ls $REFDIR/*no_M.vcf )
 
 # Job script files
 #jobOutputDir=/data/autoScratch/weekly/hfx472/
-jobOutputDir=$DIR/
+jobOutputDir=/data/autoScratch/weekly/hfx472/
 trimJob=$jobOutputDir$jobName\.01.Trim_Job.$today\.sh
 alignJob=$jobOutputDir$jobName\.02.Align_Job.$today\.sh
 fgbioJob=$jobOutputDir$jobName\.03.fgbio_Job.$today\.sh
@@ -147,6 +147,8 @@ echo "
 #$ -l h_vmem=4G		# Request 4G RAM / Core
 #$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
 #$ -N $jobName-Trim_Job
+
+DIR=$DIR
 " > $trimJob
 
 echo '
@@ -397,7 +399,8 @@ FASTQ_Con/$Sample/*_R1* FASTQ_Con/$Sample/*_R2* |
 java -Xmx4g -jar ~/Software/picard.jar SortSam \
         SORT_ORDER=coordinate \
         I=/dev/stdin \
-        O=Alignment/$Sample.con.bam;
+        O=Alignment/$Sample.con.bam \
+	CREATE_INDEX=true
 ' >> $conAlignJob
 
 echo "
@@ -429,12 +432,12 @@ Samples=(ls FASTQ_Con/*)
 Sample=$(basename ${Samples[${SGE_TASK_ID}]})
 echo $Sample
 
-consensusbam=Alignment/$Samples\.rehead.bam
-realignmentlist=Alignment/$Samples\.bam.list
-realignmentbam=Alignment/$Samples\.realigned.bam
-realignmentfixbam=Alignment/$Samples\.fixed.bam
-baserecaldata=Alignment/$Samples\.recal_data.grp
-recalioutbam=Alignment/$Samples\.recalib.bam
+consensusbam=Alignment/$Sample\.con.bam
+realignmentlist=Alignment/$Sample\.bam.list
+realignmentbam=Alignment/$Sample\.realigned.bam
+realignmentfixbam=Alignment/$Sample\.fixed.bam
+baserecaldata=Alignment/$Sample\.recal_data.grp
+recalioutbam=Alignment/$Sample\.recalib.bam
 
 ## local alignment around indels
 echo "####MESS Step 4: local alignment around indels"
@@ -555,7 +558,7 @@ echo "
 #$ -pe smp 1            # Request 1 CPU cores
 #$ -l h_rt=24:0:0        # Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
 #$ -l h_vmem=4G         # Request 4G RAM / Core
-#$ -N $jobName-Varscan_Job
+#$ -N $jobName-VarFilt_Job
 SuppScirptDir=$SuppScirptDir" > $varFiltJob
 
 echo '
@@ -617,4 +620,11 @@ Rscript $SuppScirptDir/VariantFix.r
 if [[ $AUTOSTART -eq 1 ]]; then
 	echo Starting the jobs. Good luck!
 	qsub $trimJob
+	qsub -hold_jid $jobName-Trim_Job $alignJob
+	qsub -hold_jid $jobName-Align_Job $fgbioJob
+	qsub -hold_jid $jobName-fgbio_Job $fastqconJob
+	qsub -hold_jid $jobName-bam2fastq $conAlignJob
+	qsub -hold_jid $jobName-ConAlign_Job $realignJob
+	qsub -hold_jid $jobName-Realign_Job $varScanJob
+	qsub -hold_jid $jobName-Varscan_Job $varFiltJob
 fi
