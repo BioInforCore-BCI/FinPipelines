@@ -2,7 +2,7 @@
 #!/bin/bash
 
 today=`date +%Y-%m-%d`
-DIR=$DIR
+DIR=$PWD
 JOBNAME=Samtools_Index
 AUTOSTART=1
 
@@ -34,7 +34,7 @@ JOBDIR=$DIR
 SAMTOOLSJOB=$JOBDIR/$JOBNAME-$today-samtools_index.sh
 
 Bams=(ls $DIR/Alignment/*.bam)
-MAX=$(echo ${#normalBams[@]})
+MAX=$(echo ${#Bams[@]})
 MAX=$( expr $MAX - 1 )
 
 echo "
@@ -47,14 +47,13 @@ echo "
 #$ -j y			# Join error and output
 #$ -m a			# Email on abort
 #$ -t 1-$MAX		# Set as array
-#$ -N $Jobname-samtools
+#$ -N $JOBNAME-samtools
 
 module load samtools
-DIR=$DIR
 " >  $SAMTOOLSJOB
 
 echo '
-Bams=(ls $DIR/Alignment/*.bam)
+Bams=(ls Alignment/*.bam)
 Bam=${Bams[${SGE_TASK_ID}]}
 
 samtools index $Bam

@@ -247,7 +247,7 @@ echo "
 echo '
 module load java
 ## Set fgbio parameters - NB this needs to have enough ram to load the whole fastq files.
-fgbio=\"java -Xmx24g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /data/home/hfx472/Software/fgbio-0.6.1.jar --compression=0\"
+fgbio="java -Xmx24g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /data/home/hfx472/Software/fgbio-0.6.1.jar --compression=0"
 
 ## Get all the sample names from FASTQ_TRIM
 Samples=(ls FASTQ_TRIM/*)
@@ -326,7 +326,7 @@ paste Stats/UMIcount/*.UMIcount | sed -e "s/cD:i://g" > Stats/UMIcount/AllUMICou
 
 echo "
 #!/bin/sh
-#$ -wd /data/home/hfx472/CurrentProjects/Giuseppe_TP            # use current working directory
+#$ -wd $DIR            # use current working directory
 #$ -V			# this makes it verbose
 #$ -j y			# Join output
 #$ -o /data/autoScratch/weekly/hfx472   # specify an output file
@@ -518,12 +518,13 @@ Sample=$(basename ${Samples[${SGE_TASK_ID}]})
 echo $Sample
 
 ## Output Files
-outSnp=VCF/$sample\_snp.vcf
-outIndel=VCF/$sample\_indel.vcf
-outSnp_fil=VCF/$sample\.pass.snp.vcf
-outIndel_fil=VCF/$sample\.pass.indel.vcf
+outSnp=VCF/$Sample\_snp.vcf
+outIndel=VCF/$Sample\_indel.vcf
+outSnp_fil=VCF/$Sample\.pass.snp.vcf
+outIndel_fil=VCF/$Sample\.pass.indel.vcf
+$Bam=Alignment/$Sample\.recalib.bam
 
-time samtools mpileup -B -q 40 -l $BED -f $refGenome $Sample |
+time samtools mpileup -B -q 40 -l $BED -f $refGenome $Bam |
 java -jar $varScan mpileup2snp \
 	--min-coverage 20 \
         --min-avg-qual 20 \
@@ -533,7 +534,7 @@ java -jar $varScan mpileup2snp \
         --strand-filter 1 \
         --output-vcf 1 > $outSnp
 
-time samtools mpileup -B -q 40 -l $BED -f $refGenome $Sample |
+time samtools mpileup -B -q 40 -l $BED -f $refGenome $Bam |
 java -jar $varScan mpileup2indel \
 	--min-coverage 20 \
         --min-avg-qual 20 \
