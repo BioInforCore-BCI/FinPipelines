@@ -5,7 +5,7 @@ Avaliable pipelines:
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
 1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
-1. [Strelka_Array.sh](#strelka_arraysh)
+1. [Strelka_Somatic_Array.sh](#strelka_somatic_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
 1. [Polysolver_Array.sh](#polysolver_arraysh)
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
@@ -16,7 +16,7 @@ Avaliable pipelines:
 
 Software | Expected location on server
 --- | ---
-<a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software 
+<a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software
 <a href="https://software.broadinstitute.org/gatk/download/">Genome Analysis Toolkit</a> | symlink to latest GATK release called gatk-latest should be found in /data/home/$USER/Software. Make a symlink using ln -s /path/to/gatk gatk-latest
 <a href="https://github.com/Illumina/strelka/tree/master">Strelka</a> | Strelka root dir should be in /data/home/$USER/Software
 <a href="https://github.com/arq5x/lumpy-sv">Lumpy</a> | Lumpy root dir should be in /data/home/$USER/Software
@@ -37,7 +37,7 @@ The script will expect that the fastq files are stored in a directory called FAS
 
 i.e.
 
-Project root | raw | sample | .fastq.gz 
+Project root | raw | sample | .fastq.gz
 --- | --- | --- | ---
 WGS | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
@@ -55,7 +55,7 @@ The avaliable options are as follow:
 -t | -trim		Creates a job to trim the samples. Autostart will submit this job, not make sai (default off)
 -h | --help		Display this message and exit"
 ```
-If the script is set to autorun then it will load the SAI arrays straight away, otherwise the job files will just sit there waiting for you. The jobs *should* be submitted to the server as they previous job finishes but keep an eye on it. 
+If the script is set to autorun then it will load the SAI arrays straight away, otherwise the job files will just sit there waiting for you. The jobs *should* be submitted to the server as they previous job finishes but keep an eye on it.
 
 ***
 
@@ -81,7 +81,7 @@ It assumes all the files are stored in FASTQ_Raw and it's first step is to conca
 
 i.e. the data will start like this:
 
-Project root | raw  | .fastq.gz 
+Project root | raw  | .fastq.gz
 --- | --- | ---
 UMI_panel | FASTQ_Raw | Sample1_R1.fastq.gz
 |  |  | Sample1_R2.fastq.gz
@@ -91,7 +91,7 @@ UMI_panel | FASTQ_Raw | Sample1_R1.fastq.gz
 
 And end up looking like this:
 
-Project root | raw | sample | .fastq.gz 
+Project root | raw | sample | .fastq.gz
 --- | --- | --- | ---
 UMI_panel | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
@@ -111,7 +111,7 @@ The avaliable options are as follow:
 ***
 ## Hisat2_Align_Array.sh
 
-This will create a array job that will align fastq files using hisat2. 
+This will create a array job that will align fastq files using hisat2.
 
 ### Prerequisites
 
@@ -119,7 +119,7 @@ The script will expect that the fastq files are stored in a directory called FAS
 
 i.e.
 
-Project root | raw | sample | .fastq.gz 
+Project root | raw | sample | .fastq.gz
 --- | --- | --- | ---
 RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
@@ -137,7 +137,7 @@ The avaliable options are as follow:
 
 ***
 
-## Strelka_Array.sh
+## Strelka_Somatic_Array.sh
 
 This will build a strelka array job for matched tumour/normal pairs.
 
@@ -145,13 +145,13 @@ This will build a strelka array job for matched tumour/normal pairs.
 
 The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
 The script picks bam files based on a common prefix at the start of the file.
-It takes all the \*normal\*.bam files and then splits at the periods and takes the first section. 
+It takes all the \*normal\*.bam files and then splits at the periods and takes the first section.
 This is then used to find the Prefix\*normal\*.bam and Prefix\*tumour\*.bam.
 The Bam files must also be indexed.
 
 i.e.
 
-Patient Prefix | Sample | .suffix 
+Patient Prefix | Sample | .suffix
  --- | --- | ---
 Patient_1. | normal | .bam
 Patient_1. | normal | .bai
@@ -179,13 +179,13 @@ This will build a MuTect 2 array job for matched tumour/normal pairs.
 
 The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
 The script picks bam files based on a common prefix at the start of the file.
-It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
+It takes all the *normal*.bam files and then splits at the periods and takes the first section.
 This is then used to find the Prefix\*normal\*.bam and Prefix\*tumour\*.bam.
 The Bam files must also be indexed.
 
 i.e.
 
-Patient Prefix | Sample | .suffix 
+Patient Prefix | Sample | .suffix
  --- | --- | ---
 Patient_1. | normal | .bam
 Patient_1. | normal | .bai
@@ -210,13 +210,13 @@ Options avaliable:
 
 The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
 The script picks bam files based on a common prefix at the start of the file.
-It takes all the *normal*.bam files and then splits at the periods and takes the first section. 
+It takes all the *normal*.bam files and then splits at the periods and takes the first section.
 This is then used to find the Prefix\*normal\*.bam and Prefix\*tumour\*.bam.
 The Bam files must also be indexed.
 
 i.e.
 
-Patient Prefix | Sample | .suffix 
+Patient Prefix | Sample | .suffix
  --- | --- | ---
 Patient_1. | normal | .bam
 Patient_1. | normal | .bai
@@ -247,7 +247,7 @@ source activate polysolver
 ```
 This is how the array builder works, so if you make a different environment name I'm going to have to write in a new argument to specific the environment and that'll be a whole thing.
 
-Options: 
+Options:
 ```bash
 -a | --auto-start		Automatically start the jobs on creation (default off)
 -n | --name			The name for the job (default BWA_Align)
@@ -297,7 +297,7 @@ if MODE is set to bam you'll need a directory called Alignment that contains bam
 
 i.e.
 
-Project root | raw | sample | .fastq.gz 
+Project root | raw | sample | .fastq.gz
 --- | --- | --- | ---
 RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
 |  |  |  | Sample1_R2.fastq.gz
