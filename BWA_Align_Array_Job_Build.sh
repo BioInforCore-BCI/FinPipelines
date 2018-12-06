@@ -82,14 +82,14 @@ READ2JOB=$JOBDIR/$JOBNAME.$today.read2.sh
 COMBOJOB=$JOBDIR/$JOBNAME.$today.combo.sh
 REALIGNJOB=$JOBDIR/$JOBNAME.$today.realign.sh
 
-if ! [[ -d $DIR/Alignment ]]; 
+if ! [[ -d $DIR/Alignment ]];
 	then mkdir $DIR/Alignment
 fi
 
 ## All job files
 #$READ1JOB $READ2JOB $COMBOJOB $CONVERTJOB $DUPJOB $REALIGNJOB $RECALJOB
 
-if [[ TRIM -eq 1 ]]; then 
+if [[ TRIM -eq 1 ]]; then
 
 	####################
 	# Trimming Job
@@ -122,11 +122,8 @@ if [[ TRIM -eq 1 ]]; then
 	time trim_galore --paired --retain_unpaired --illumina --gzip \
 		--fastqc_args "-o QC/TRIM/" \
 		-o FASTQ_TRIM/$Sample/ \
-		FASTQ_Raw/$Sample/*R1.fastq.gz FASTQ_Raw/$Sample/*R2.fastq.gz
-	# As long as the trim runs successfully run some clean up.
-	if ! [[ $? -eq 0 ]]; then
-		exit 1
-	fi
+		FASTQ_Raw/$Sample/*R1.fastq.gz FASTQ_Raw/$Sample/*R2.fastq.gz ||
+                        { echo trimming has failed; exit 1; }
 	' >> $TRIMJOB
 
 else
@@ -173,13 +170,10 @@ module load bwa
 ## Do not make sai if the sai already exists and is not 0 bytes.
 if ! [[ -s $read1sai ]]; then
 	echo ####MESS Step 1: Make SAI
-	time bwa aln -t 8 $referenceindex $read1name > $read1sai
-	if ! [[ $? -eq 0 ]]; then
-		rm $read1sai
-		exit 1
-	fi
+	time bwa aln -t 8 $referenceindex $read1name > $read1sai ||
+                { echo Alignment failed removing $read1sai; rm $read1sai; exit 1; }
 fi
-' >> $READ1JOB 
+' >> $READ1JOB
 
 echo '
 ## the ls here does not actually do anything except take up ${Sample[0]} in the list.
@@ -194,19 +188,16 @@ module load bwa
 ## Do not make sai if the sai already exists and is not 0 bytes.
 if ! [[ -s $read2sai ]]; then
 	echo ####MESS Step 1: Make SAI
-	time bwa aln -t 8 $referenceindex $read2name > $read2sai
-	if ! [[ $? -eq 0 ]]; then
-		rm $read2sai
-		exit 1
-	fi
+	time bwa aln -t 8 $referenceindex $read2name > $read2sai ||
+                { echo Alignment failed removing $read2sai; rm $read2sai; exit 1; }
 fi
 ' >> $READ2JOB
 
-echo ' 
+echo '
 if [[ $(ls Alignment/*.sai | wc -l ) -eq $TotalSAI ]] && [[ $(qstat -r | grep Full | grep BWA-$JOBNAME-read | wc -l ) -eq 1 ]];
 	then echo Starting SAM production
 	qsub $COMBOJOB
-fi 
+fi
 ' | tee -a $READ1JOB $READ2JOB
 
 ######################
@@ -249,7 +240,7 @@ outputsam=Alignment/$sampleName\.sam
 outputbam=Alignment/$sampleName\.bam
 
 module load bwa
-## There is a problem with default java, so need to load it here. 
+## There is a problem with default java, so need to load it here.
 module load java
 echo ####MESS Step 1: Make Sam
 
@@ -260,29 +251,27 @@ if ! [[ -s $outputsam ]] && ! [[ -s $outputbam ]]; then
 		$read1sai \
 		$read2sai \
 		$read1name \
-		$read2name > $outputsam
-
-	## If the job fails remove the sam file and exit
-	if ! [[ $? -eq 0 ]]; then rm $outputsam; exit 1; fi 
-
+		$read2name > $outputsam ||
+                        ## If the job fails remove the sam file and exit
+                        {rm echo Alignment failed removing $outputsam; $outputsam; exit 1;}
 fi
 echo ####MESS Step 2: Make Bam
 ## If the bam file does not exist or is smaller than 0 and the sam size is greater than 0 run the sort.
 if ! [[ -s $outputbam ]] && [[ -s $outputsam ]]; then
-	java -Xmx16g -Djava.io.tmpdir=/data/autoScratch/weekly/hfx472 -jar ~/Software/picard.jar SortSam \
+	time java -Xmx16g -Djava.io.tmpdir=/data/autoScratch/weekly/hfx472 -jar ~/Software/picard.jar SortSam \
 		SO=coordinate \
 		INPUT=$outputsam \
 		OUTPUT=$outputbam \
 		VALIDATION_STRINGENCY=LENIENT \
 		CREATE_INDEX=true \
-		MAX_RECORDS_IN_RAM=5000000
-	
+		MAX_RECORDS_IN_RAM=5000000 ||
+                        ## If the job fails delete the bam file and quality
+                        { echo Bam creation failed; rm $outputbam; exit 1;}
+
 	## If thejob does not fail and the bam size is greater than 0 delete the precursor files.
-	if [[ $? -eq 0 ]] && [[ -s $outputbam ]]; 
+	if [[ $? -eq 0 ]] && [[ -s $outputbam ]];
 		then echo deleting precursors;
 		rm $outputsam $read1sai $read2sai;
-	else
-		rm $outputbam
 	fi
 
 fi
@@ -290,7 +279,7 @@ fi
 if [[ $(ls Alignment/*.bam | wc -l ) -eq $MAX ]] && [[ $(qstat -r | grep Full | grep BWA-$JOBNAME-MakeBam | wc -l) -eq 1 ]];
 	then echo Starting realignment
 	qsub $REALIGNJOB
-fi 
+fi
 ' >> $COMBOJOB
 
 echo "
@@ -301,7 +290,7 @@ echo "
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores
-#$ -l h_rt=240:0:0	# Request 240 hour runtime (This is an overestimation probably. Alter based on your needs.) 
+#$ -l h_rt=240:0:0	# Request 240 hour runtime (This is an overestimation probably. Alter based on your needs.)
 #$ -l h_vmem=16G	# Request 16G RAM / Core
 #$ -t 1-$MAX            # run an array job of all the samples listed in FASTQ_Raw
 #$ -N BWA-$JOBNAME-Realign
@@ -341,7 +330,11 @@ time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD MarkDuplicates \
 	METRICS_FILE=$sampleName\.metrics.txt \
 	CREATE_INDEX=true \
 	VALIDATION_STRINGENCY=LENIENT \
-	MAX_RECORDS_IN_RAM=5000000
+	MAX_RECORDS_IN_RAM=5000000 ||
+                ##If fails delete output and exit
+                { echo Marking duplicates failed removing $outputbammarked;
+                        rm $outputbammarked;
+                        exit 1 }
 
 ## local alignment around indels
 echo "####MESS Step 4: local alignment around indels"
@@ -349,13 +342,15 @@ echo "####MESS Step 4: first create a table of possible indels"
 time java -Xmx16g -jar $GATK -T RealignerTargetCreator \
         -R $reference \
         -o $realignmentlist \
-        -I $outputbammarked
+        -I $outputbammarked ||
+                ##If fails delete output and exit
+                { echo failed to create list removing $realignmentlist;
+                        rm $realignmentlist;
+                        exit 1 }
 
 if [[ $? -eq 0 ]] && [[ -s $outputbammarked ]];
-	then 
+	then
 		rm $outputbam
-	else
-		exit 1
 fi
 
 echo "####MESS Step 4: realign reads around those targets"
@@ -364,13 +359,15 @@ time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $GATK \
         -R $reference \
         -T IndelRealigner \
         -targetIntervals $realignmentlist \
-        -o $realignmentbam
+        -o $realignmentbam  ||
+                ##If fails delete output and exit
+                { echo realign failed removing $realignmentbam;
+                        rm $realignmentbam;
+                        exit 1 }
 
 if [[ $? -eq 0 ]] && [[ -s $realignmentbam ]];
 	then
 		rm $outputbammarked
-	else
-		exit 1
 fi
 
 echo "####MESS Step 4: fix paired end mate information using Picard"
@@ -380,13 +377,15 @@ time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD FixMateInformation \
         SO=coordinate \
         VALIDATION_STRINGENCY=LENIENT \
         CREATE_INDEX=true \
-	MAX_RECORDS_IN_RAM=5000000
+	MAX_RECORDS_IN_RAM=5000000  ||
+                ##If fails delete output and exit
+                { echo Failed to fix bam removing $realignmentfixbam;
+                        rm $realignmentfixbam;
+                        exit 1 }
 
-if [[ $? -eq 0 ]] && [[ -s $realignmentfixbam ]]; 
-	then 
+if [[ $? -eq 0 ]] && [[ -s $realignmentfixbam ]];
+	then
 		rm $realignmentbam
-	else
-		exit 1
 fi
 
 ## base quality score recalibration
@@ -395,7 +394,11 @@ time java -Xmx16g -jar $GATK -T BaseRecalibrator \
         -I $realignmentfixbam \
         -R $reference \
         -knownSites $dbsnp \
-        -o $baserecaldata
+        -o $baserecaldata ||
+                ##If fails delete output and exit
+                { echo Failed to recalibrate scores removing $baserecaldata;
+                        rm $baserecaldata;
+                        exit 1 }
 
 if ! [[ $? -eq 0 ]]; then exit 1; fi
 
@@ -404,7 +407,11 @@ time java -Xmx16g -jar $GATK -T PrintReads \
         -R $reference \
         -I $realignmentfixbam \
         -BQSR $baserecaldata \
-        -o $recalioutbam
+        -o $recalioutbam ||
+                ##If fails delete output and exit
+                { echo Failed to output recalib bam removing $recalioutbam;
+                        rm $recalioutbam;
+                        exit 1 }
 
 if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 	then
@@ -417,10 +424,12 @@ if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
 fi
 ' >> $REALIGNJOB
 
-if [[ $AUTOSTART -eq 1 ]]; then 
+if [[ $AUTOSTART -eq 1 ]]; then
 	echo autostarting pipeline
 	if [[ TRIM -eq 1 ]]; then
 		qsub $TRIMJOB
+                qsub -hold_jid $TRIMJOB $READ1JOB
+                qsub -hold_jid $TRIMJOB $READ2JOB
 	else
 		qsub $READ1JOB
 		qsub $READ2JOB
