@@ -418,6 +418,7 @@ echo "
 
 GATK=$GATK
 PICARD=$PICARD
+SuppScirptDir=$SuppScirptDir
 
 reference=$reference
 referenceindex=$refIndex
