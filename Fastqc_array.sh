@@ -4,7 +4,7 @@ today=`date +%Y-%m-%d`
 DIR=$PWD
 JOBNAME=FASTQC
 MODE=fastq
-$jobOutputDir=/data/autoScratch/weekly/$USER
+jobOutputDir=/data/autoScratch/weekly/$USER
 AUTOSTART=0
 
 while [ "$1" != "" ]; do

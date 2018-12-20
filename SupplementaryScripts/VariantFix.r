@@ -52,7 +52,7 @@ return(Variants)
 
 Variants <- list()
 Variants$ExonVars <- list()
-Variants$IntronVars <- list()
+Variants$IntVars <- list()
 
 Variants$ExonVars$Raw <- read.delim("Variants.exon.filter.cut.txt")
 Variants$IntVars$Raw <- read.delim("Variants.intron.filter.cut.txt")

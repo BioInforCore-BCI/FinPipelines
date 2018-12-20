@@ -42,7 +42,7 @@ while [ "$1" != "" ]; do
 					;;
 		-h | --help )		echo "\
 -a | --auto-start 		Automatically start the jobs on creation (default off)
--n | --name 	           	The name for the job (default BWA_Align)
+-n | --name 	           	The name for the job (default Hisat2_Align)
 -d | --directory 	      	The root directory for the project (default $PWD)
 -r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help 			Display this message and exit"
@@ -72,13 +72,13 @@ echo "
 #$ -o /data/autoScratch/weekly/$USER/        # specify an output file - change 'outputfile.out'
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
-#$ -pe smp 8		# Request 8 CPU cores
+#$ -pe smp 4		# Request 4 CPU cores
 #$ -l h_rt=12:0:0	# Request 12 hour runtime (upto 240 hours)
 #$ -l h_vmem=4G		# Request 4GB RAM / core
 #$ -t 1-$MAX
 #$ -N Hisat2-$JOBNAME-$today
 
-HISAT2=data/home/$USER/Software/hisat2-2.1.0/hisat2
+HISAT2=/data/home/$USER/Software/hisat2-2.1.0/hisat2
 referenceindex=$referenceindex
 refSites=$refSites
 DIR=$DIR
@@ -96,14 +96,19 @@ Sample=${FASTQ_Raw[${SGE_TASK_ID}]}
 
 READ1=$Sample/*R1*
 READ2=$Sample/*R2*
-outBam=$DIR/Alignment/basename($Sample).bam
+outBam=$DIR/Alignment/$(basename $Sample).bam
 
-$HISAT2 -p 8 \
+time $HISAT2 -p 4 \
 	--dta \
 	-x $referenceindex \
 	--known-splicesite-infile $refSites \
 	-1 $READ1 \
 	-2 $READ2 |
 	samtools view -Shbu - |
-	samtools sort -@ 8 -n -o $outBam -
+	samtools sort -@ 4 -n -o $outBam -
 ' >> $HISAT2JOB
+
+if [[ $AUTOSTART -eq 1 ]]; then
+	echo Starting the job.
+	qsub $HISAT2JOB
+fi

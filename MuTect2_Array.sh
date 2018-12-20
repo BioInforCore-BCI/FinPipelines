@@ -80,10 +80,19 @@ reference=$reference
 " > $MUTECT2JOB
 
 echo '
-normalBams=(ls Alignment/*normal*.bam)
-Patient=$(basename ${normalBams[${SGE_TASK_ID}]} | cut -d'.' -f 1)
-normalBam=Alignment/$Patient*normal*.bam
-tumourBam=Alignment/$Patient*tumour*.bam
+Controls=( ls $(find Alignment/ -name "*control*.bam") )
+normalBam=${Controls[SGE_TASK_ID]}
+Patient=$( echo $normalBam | cut -d'_' -f 2 )
+tumourBam=$(find Alignment/ -name "tumor*$Patient*bam" ) ||
+        { echo No tumour bam found; exit 1; }
+
+echo Normal File: $normalBam
+echo Tumour File: $tumourBam
+
+if [[ -s VCF/Mutect2/$Patient\.vcf ]]; then
+        echo VCF already exists. Either you have run this already or there is a problem.
+        exit 1
+fi
 
 module load java
 

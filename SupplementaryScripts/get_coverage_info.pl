@@ -46,7 +46,7 @@ foreach my $line (@filedata) {
                 $end1 = $info1[2];
                 $assay = $info1[3];
                 $coverage = $info1[4];
-                $percentage = $info1[7];
+                $percentage = $info1[-1];
                 if($chr1 eq $chr && $sta1 == $sta && $end1 == $end) {
 #                    print "\t$coverage";
                     print OUT "\t$coverage";
