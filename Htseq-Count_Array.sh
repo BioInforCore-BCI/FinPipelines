@@ -3,8 +3,7 @@ today=`date +%Y-%m-%d`
 
 DIR=$PWD
 JOBNAME=HTSEQ_Count
-#FILES=(ls $(find Alignment/ -name "*.bam") )
-FILES=(ls $(find RNA-Seq/ -name "*.bam") )
+FILES=(ls $(find Alignment/ -name "*.bam") )
 MAX=$(echo ${#FILES[@]})
 MAX=$( expr $MAX - 1 )
 GTF=/data/home/$USER/BCI-Haemato/Refs/GRCh38/Annotation/hg38.gtf
@@ -49,16 +48,18 @@ echo "
 #!/bin/sh
 #$ -wd $DIR							# set working directory
 #$ -V                   					# this makes it verbose
-#$ -o /data/autoScratch/weekly/hfx472				# specify an output file
+#$ -o /data/autoScratch/weekly/$USER				# specify an output file
 #$ -j y                 					# and put all output (inc errors) into it
 #$ -m a                 					# Email on abort
 #$ -pe smp 1            					# Request 1 CPU cores
 #$ -l h_rt=120:0:0						# Request 120 hour runtime
 #$ -l h_vmem=4G							# Request 4G RAM / Core
-#$ -t 1-$MAX 
-#$ -N $JOBNAME\_HTSEQ
+#$ -t 1-$MAX							# Run an array of $MAX jobs 
+#$ -N $JOBNAME\_HTSEQ						# Set Jobname
+
 refGTF=$GTF
 MAX=$MAX
+source /data/home/$USER/envs/htseq-count/bin/activate
 " > $HTSEQ
 
 echo ' 
@@ -69,14 +70,12 @@ if ! [[ -s Expression/$SAMPLE\.Counts.txt ]];
 then
 	echo Now processing $BAM
 	
-	source /data/home/hfx472/envs/htseq-count/bin/activate
-	
 	htseq-count -f bam -s reverse $BAM $refGTF >> Expression/$SAMPLE\.Counts.txt
-	
-	deactivate
 else
 	echo output file found. Have you already run this sample?
 fi
+
+deactivate
 
 if [[ $(ls Expression/*Counts.txt | wc -l ) -eq $MAX ]] &&
 	[[ $(qstat -r | grep Full | grep HTSEQ_Fin | wc -l) -eq 1 ]];
