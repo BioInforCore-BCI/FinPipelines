@@ -5,6 +5,7 @@ Avaliable pipelines:
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
 1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
+1. [Htseq-Count_Array.sh](#htseq-count_arraysh)
 1. [Strelka_Somatic_Array.sh](#strelka_somatic_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
 1. [Polysolver_Array.sh](#polysolver_arraysh)
@@ -20,6 +21,7 @@ Software | Expected location on server
 <a href="https://software.broadinstitute.org/gatk/download/">Genome Analysis Toolkit</a> | symlink to latest GATK release called gatk-latest should be found in /data/home/$USER/Software. Make a symlink using ln -s /path/to/gatk gatk-latest
 <a href="https://github.com/Illumina/strelka/tree/master">Strelka</a> | Strelka root dir should be in /data/home/$USER/Software
 <a href="https://github.com/arq5x/lumpy-sv">Lumpy</a> | Lumpy root dir should be in /data/home/$USER/Software
+htseq-count | create a virtual environment in ~/envs/ called htseq-count and install htseq using pip
 
 Make sure to load java in your scripts, the old java has a memory problem that fill cause nodes to be completely loaded.
 
@@ -133,6 +135,27 @@ The avaliable options are as follow:
 -d | --directory 	      	The root directory for the project (default $PWD)
 -r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh38/)
 -h | --help 			Display this message and exit"
+```
+
+***
+
+## Htseq-Count_Array.sh
+
+This will create an array job to run HTSEQ-count
+
+### Prerequisites
+
+Aligned RNA-seq bam files should be stored under Alignment.
+
+Must have a virtual env that has htseq installed.
+
+The avaliable options are as follow:
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name                     The name for the job (default BWA_Align)
+-d | --directory                The root directory for the project (default $PWD)
+-g | --gtf			gtf file (default GRCh37/Annotation/hg38.gtf)
+-h | --help                     Display this message and exit"
 ```
 
 ***
