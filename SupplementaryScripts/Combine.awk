@@ -14,5 +14,5 @@ NR==FNR { L[FNR]=L[FNR] $1}
 ## add a tab and the contents of column 2 to the array.
 {L[FNR]=L[FNR]  "\t" $2}
 ## at the end loop through the array starting at index 0 (the file names)
-END { for ( i=0; i<=length(L);i++) print L[i]}
+END { for ( i=0; i<=length(L)-1;i++) print L[i]}
 
