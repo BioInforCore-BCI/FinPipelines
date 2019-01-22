@@ -58,6 +58,7 @@ echo "
 #$ -t 1-$MAX							# Run an array of $MAX jobs 
 #$ -N $JOBNAME-HTSEQ						# Set Jobname
 
+JOBNAME=$JOBNAME
 SuppScirptDir=$SuppScirptDir
 refGTF=$GTF
 MAX=$MAX
@@ -65,6 +66,8 @@ source /data/home/$USER/envs/htseq-count/bin/activate
 " > $HTSEQ
 
 echo ' 
+if ! [[ -d Expression ]]; then mkdir Expression; fi
+
 BAMS=( ls  $(find Alignment/ -name "*.bam") )
 BAM=${BAMS[SGE_TASK_ID]}
 SAMPLE=$(basename $BAM | cut -d'.' -f 1)
@@ -80,7 +83,7 @@ fi
 deactivate
 
 if [[ $(ls Expression/*Counts.txt | wc -l ) -eq $MAX ]] &&
-	[[ $(qstat -r | grep Full | grep HTSEQ_Fin | wc -l) -eq 1 ]];
+	[[ $(qstat -r | grep Full | grep $JOBNAME-HTSEQ | wc -l) -eq 1 ]];
 
 then
 	awk -f $SuppScirptDir/Combine.awk Expression/*.Counts.txt > Expression/Counts.Combo.txt

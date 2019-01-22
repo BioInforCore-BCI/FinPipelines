@@ -170,7 +170,10 @@ echo $Sample/*R1.fastq;
 time trim_galore --paired --retain_unpaired --illumina --gzip \
         --fastqc_args "-o QC/TRIM/" \
         -o FASTQ_TRIM/$Sample/ \
-        FASTQ_Raw/$Sample/*R1.fastq.gz FASTQ_Raw/$Sample/*R2.fastq.gz
+        FASTQ_Raw/$Sample/*R1.fastq.gz FASTQ_Raw/$Sample/*R2.fastq.gz ||
+		{ echo failed to trim file removing output folder FASTQ_TRIM/$Sample;
+			rm -rf FASTQ_TRIM/$Sample;
+			exit 1; } 
 
 # As long as the trim runs successfully run some clean up.
 if [[ $? -eq 0 ]]; then
@@ -221,10 +224,13 @@ time bwa mem -t 8 -M $refIndex \
 -R "@RG\tID:$Sample\tLB:$Sample\tSM:$Sample\tPL:Illumina" \
 FASTQ_TRIM/$Sample/*val_1* FASTQ_TRIM/$Sample/*val_2* |
 # Sort aligned file by coordinate
-java -Xmx4g -jar ~/Software/picard.jar SortSam \
+time java -Xmx4g -jar ~/Software/picard.jar SortSam \
         SORT_ORDER=coordinate \
 	I=/dev/stdin \
-	O=Alignment/$Sample.bam;
+	O=Alignment/$Sample.bam || 
+	{ echo Failed to align, removing Alignment/$Sample.bam;
+		rm Alignment/$Sample.bam;
+		exit 1; }
 ' >> $alignJob
 
 ##
@@ -294,7 +300,7 @@ $fgbio GroupReadsByUmi \
 	-i Alignment/$sampleName\.fgmate.bam \
 	-f Alignment/$sampleName\.family_size_histogram.txt \
 	-s adjacency \
-	-o Alignment/$sampleName\.fggrp.bam |
+	-o Alignment/$sampleName\.fggrp.bam
 
 if [[ $? -eq 0 ]] && [[ -s Alignment/$sampleName\.fggrp.bam ]];
         then
@@ -443,45 +449,63 @@ recalioutbam=Alignment/$Sample\.recalib.bam
 ## local alignment around indels
 echo "####MESS Step 4: local alignment around indels"
 echo "####MESS Step 4: first create a table of possible indels"
-java -Xmx4g -jar $GATK -T RealignerTargetCreator \
-	-R $reference \
-	-o $realignmentlist \
-	-I $consensusbam
-if ! [[ $? -eq 0 ]]; then exit 1; fi
+if ! [[ -f $realignmentlist]]; then
+	time java -Xmx4g -jar $GATK -T RealignerTargetCreator \
+		-R $reference \
+		-o $realignmentlist \
+		-I $consensusbam ||
+		{ echo realignment target creation failed, deleteing $realignmentlist;
+	                rm $realignmentlist;
+	                 exit 1; }
+fi
 echo "####MESS Step 4: realign reads around those targets"
-java -Xmx4g -Djava.io.tmpdir=/tmp -jar $GATK \
-	-I $consensusbam \
-	-R $reference \
-	-T IndelRealigner \
-	-targetIntervals $realignmentlist \
-	-o $realignmentbam
-if ! [[ $? -eq 0 ]]; then exit 1; fi
+if ! [[ -f $realignmentbam ]]; then
+	time java -Xmx4g -Djava.io.tmpdir=/tmp -jar $GATK \
+		-I $consensusbam \
+		-R $reference \
+		-T IndelRealigner \
+		-targetIntervals $realignmentlist \
+		-o $realignmentbam ||
+		{ echo realignment failed, deleteing $realignmentbam;
+	                rm $realignmentbam;
+	                 exit 1; }
+fi
+
 echo "####MESS Step 4: fix paired end mate information using Picard"
-java -Djava.io.tmpdir=/tmp -jar $PICARD FixMateInformation \
-	INPUT=$realignmentbam \
-	OUTPUT=$realignmentfixbam \
-	SO=coordinate \
-	VALIDATION_STRINGENCY=LENIENT \
-	CREATE_INDEX=true
-date
-if ! [[ $? -eq 0 ]]; then exit 1; fi
+if ! [[ -f $realignmentfixbam ]]; then
+	time java -Djava.io.tmpdir=/tmp -jar $PICARD FixMateInformation \
+		INPUT=$realignmentbam \
+		OUTPUT=$realignmentfixbam \
+		SO=coordinate \
+		VALIDATION_STRINGENCY=LENIENT \
+		CREATE_INDEX=true ||
+		{ echo Fixing mate info failed, deleteing $realignmentfixbam;
+	                rm $realignmentfixbam;
+	                 exit 1; }
+fi
 ## base quality score recalibration
 echo "####MESS Step 5: base quality score recalibration"
-java -Xmx4g -jar $GATK -T BaseRecalibrator \
-	-I $realignmentfixbam \
-	-R $reference \
-	-knownSites $dbsnp \
-	-o $baserecaldata
-if ! [[ $? -eq 0 ]]; then exit 1; fi
+if ! [[ -f $baserecaldata ]]; then 
+	time java -Xmx4g -jar $GATK -T BaseRecalibrator \
+		-I $realignmentfixbam \
+		-R $reference \
+		-knownSites $dbsnp \
+		-o $baserecaldata ||
+		{ echo recalibration failed, deleteing $baserecaldata;
+			rm $baserecaldata;
+			 exit 1; }
+fi
 echo "####MESS Step 5: print recalibrated reads into BAM"
-java -jar $GATK -T PrintReads \
-	-R $reference \
-	-I $realignmentfixbam \
-	-BQSR $baserecaldata \
-	-o $recalioutbam
-date
-
-if ! [[ $? -eq 0 ]]; then exit 1; fi
+if ! [[ -f $recalioutbam ]]; then
+	time java -jar $GATK -T PrintReads \
+		-R $reference \
+		-I $realignmentfixbam \
+		-BQSR $baserecaldata \
+		-o $recalioutbam || 
+		{ echo Print reads failed, deleteing $recalioutbam;
+			rm $recalioutbam;
+			 exit 1; }
+fi
 
 $SuppScirptDir/get_coverage_targeted_regions.sh $BED
 perl $SuppScirptDir/get_coverage_info.pl $BED

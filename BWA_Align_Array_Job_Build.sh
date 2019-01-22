@@ -3,10 +3,6 @@ today=`date +%Y-%m-%d`
 
 DIR=$PWD
 JOBNAME=BWA_Align
-FILES=(ls FASTQ_Raw/*)
-MAX=$(echo ${#FILES[@]})
-MAX=$( expr $MAX - 1 )
-TotalSAI=$( expr $MAX + $MAX )
 
 REFDIR=/data/BCI-Haemato/Refs/
 
@@ -52,6 +48,10 @@ while [ "$1" != "" ]; do
         shift
 done
 
+FILES=(ls $DIR/FASTQ_Raw/*)
+MAX=$(echo ${#FILES[@]})
+MAX=$( expr $MAX - 1 )
+TotalSAI=$( expr $MAX + $MAX )
 
 ## By Default use the hg37 reference genome
 if ! [[ $REF ]];then REF=GRCh37; fi
