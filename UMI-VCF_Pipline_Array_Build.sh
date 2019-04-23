@@ -85,16 +85,14 @@ reference=$( ls  $REFDIR/*.fa )
 dbsnp=$( ls $REFDIR/*no_M.vcf )
 
 # Job script files
-#jobOutputDir=/data/autoScratch/weekly/hfx472/
-jobOutputDir=/data/autoScratch/weekly/hfx472/
-trimJob=$jobOutputDir$jobName\.01.Trim_Job.$today\.sh
-alignJob=$jobOutputDir$jobName\.02.Align_Job.$today\.sh
-fgbioJob=$jobOutputDir$jobName\.03.fgbio_Job.$today\.sh
-fastqconJob=$jobOutputDir$jobName\.04.fastqCon_Job.$today\.sh
-conAlignJob=$jobOutputDir$jobName\.05.ConAlign_Job.$today\.sh
-realignJob=$jobOutputDir$jobName\.06.realign.$today\.sh
-varScanJob=$jobOutputDir$jobName\.07.varScan.$today\.sh
-varFiltJob=$jobOutputDir$jobName\.08.varFilt.$today\.sh
+trimJob=$jobName\.01.Trim_Job.$today\.sh
+alignJob=$jobName\.02.Align_Job.$today\.sh
+fgbioJob=$jobName\.03.fgbio_Job.$today\.sh
+fastqconJob=$jobName\.04.fastqCon_Job.$today\.sh
+conAlignJob=$jobName\.05.ConAlign_Job.$today\.sh
+realignJob=$jobName\.06.realign.$today\.sh
+varScanJob=$jobName\.07.varScan.$today\.sh
+varFiltJob=$jobName\.08.varFilt.$today\.sh
 
 ##
 # Set up the directory structure (don't run this as a job as it is needed to find MAX for sample numbers.)
@@ -139,7 +137,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V			# this makes it verbose
-#$ -o $jobOutputDir	# specify an output file
+#$ -o 	# specify an output file
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
@@ -196,7 +194,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V			# this makes it verbose
-#$ -o $jobOutputDir	# specify an output file
+#$ -o 	# specify an output file
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
 #$ -pe smp 8		# Request 1 CPU cores
@@ -241,7 +239,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V			# this makes it verbose
-#$ -o $jobOutputDir	# specify an output file
+#$ -o 	# specify an output file
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
@@ -326,7 +324,8 @@ if ! [[ $? -eq 0 ]]; then echo $sampleName >> FAIL.txt;  continue; fi
 samtools view Alignment/$sampleName\.fgcon.bam | cut -f 12 > Stats/UMIcount/$sampleName.UMIcount
 
 mkdir -p Stats/UMIcount
-paste Stats/UMIcount/*.UMIcount | sed -e "s/cD:i://g" > Stats/UMIcount/AllUMICount.txt
+echo Stats/UMIcount/*.UMIcount | tr ' ' '\t' > Stats/UMIcount/AllUMICount.txt
+paste Stats/UMIcount/*.UMIcount | sed -e "s/cD:i://g" >> Stats/UMIcount/AllUMICount.txt
 ' >> $fgbioJob
 
 
@@ -374,7 +373,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o $jobOutputDir     # specify an output file
+#$ -o      # specify an output file
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 8            # Request 1 CPU cores
@@ -413,7 +412,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o $jobOutputDir     # specify an output file
+#$ -o      # specify an output file
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores
@@ -515,7 +514,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o $jobOutputDir     # specify an output file
+#$ -o      # specify an output file
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 8            # Request 1 CPU cores
@@ -578,7 +577,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o $jobOutputDir     # specify an output file
+#$ -o      # specify an output file
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores

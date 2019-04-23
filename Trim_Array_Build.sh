@@ -21,9 +21,6 @@ while [ "$1" != "" ]; do
 		-n | --name )		shift
 					jobName=$1
 					;;
-		-b | --bed )		shift
-					BED=$1
-					;;
 		-p | --adapter )	shift
 					ADAPTER=$1
 					echo Will trim $ADAPTER adapters
@@ -43,8 +40,7 @@ while [ "$1" != "" ]; do
 		-h | --help )		echo "\
 -a | --autostart	Automaticall start the jobs, holding jobs so they run in the correct order
 -n | --name		Sets the job name (default - UMI-VCF-$PWD)
--b | --bed		Bed file for the project (default none - change this!)
--p | --adapter		Adapter to trim
+-p | --adapter		Adapter to trim (illumina)
 -d | --directory	Root directory for the project
 -r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
 -s | --setup 		Run the set up (cat the files together and create sample directories) (default off)
@@ -107,7 +103,7 @@ echo $Sample/*R1.fastq;
 time trim_galore --paired --retain_unpaired --$ADAPTER --gzip \
         --fastqc_args "-o QC/TRIM/" \
         -o FASTQ_TRIM/$Sample/ \
-        FASTQ_Raw/$Sample/*R1$fastqSuffix FASTQ_Raw/$Sample/*R2$fastqSuffix
+        FASTQ_Raw/$Sample/*R1*$fastqSuffix FASTQ_Raw/$Sample/*R2*$fastqSuffix
 
 # As long as the trim runs successfully run some clean up.
 if [[ $? -eq 0 ]]; then
