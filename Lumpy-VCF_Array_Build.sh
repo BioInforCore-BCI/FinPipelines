@@ -40,7 +40,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V			# this makes it verbose
-#$ -o /data/autoScratch/weekly/hfx472/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
 #$ -j y			# Join output
 #$ -m a                 # email on abort
 #$ -pe smp 1		# Request 1 CPU cores
@@ -67,7 +67,7 @@ samtools view -b -F 1294 $SampleBam > $DIR/Alignment/$SampleName.discordants.uns
 # Extract the split-read $DIR/Alignments
 echo getting split reads
 samtools view -h $SampleBam \
-    | /data/home/hfx472/Software/lumpy-sv/scripts/extractSplitReads_BwaMem -i stdin \
+    | /data/home/$USER/Software/lumpy-sv/scripts/extractSplitReads_BwaMem -i stdin \
     | samtools view -Sb - \
     > $DIR/Alignment/$SampleName.splitters.unsorted.bam
 
@@ -80,14 +80,14 @@ samtools sort $DIR/Alignment/$SampleName.splitters.unsorted.bam -o $DIR/Alignmen
 ## Get distribution and mean/stdev values
 STATS=$(samtools view -r $SampleName $SampleBam \
     | tail -n+100000 \
-    | /data/home/hfx472/Software/lumpy-sv/scripts/pairend_distro.py \
+    | /data/home/$USER/Software/lumpy-sv/scripts/pairend_distro.py \
     -r 101 \
     -X 4 \
     -N 10000 \
     -o $DIR/Alignment/$SampleName.lib1.histo | sed -e "s/mean://g" | sed -e "s/stdev://g" | tr "\t" ",")
 
 ## Run Lumpy
-/data/home/hfx472/Software/lumpy-sv/bin/lumpy \
+/data/home/$USER/Software/lumpy-sv/bin/lumpy \
     -mw 4 \
     -tt 0 \
     -pe id:$SampleName,\

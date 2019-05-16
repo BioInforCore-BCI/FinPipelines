@@ -68,13 +68,13 @@ echo "
 #$ -l h_rt=120:0:0 # Request 120 hour runtime
 #$ -l h_vmem=4G   # Request 4GB RAM per core
 #$ -m a
-#$ -o /data/autoScratch/weekly/hfx472/
+#$ -o /data/scratch/$USER/
 #$ -j y
 #$ -t 1-$MAX
 #$ -N MuTect2_$JOBNAME
 # TODO work out what times I need.
 
-GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
+GATK=/data/home/$USER/Software/GenomeAnalysisTK.jar
 TEMP_FILES=/data/auoScratch/weekly/$USER
 reference=$reference
 " > $MUTECT2JOB

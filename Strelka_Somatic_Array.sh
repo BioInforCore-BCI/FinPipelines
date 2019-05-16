@@ -68,7 +68,7 @@ echo "
 #$ -l h_rt=4:0:0	# Request 10 hours First run tool ~6 hours so leave a bit of a buffer
 #$ -l h_vmem=4G		# Request 4GB RAM PER CORE
 #$ -m a			# email on abort
-#$ -o /data/autoScratch/weekly/$USER/
+#$ -o /data/scratch/$USER/
 #$ -j y			# Join output
 #$ -t 1-$MAX		# Run as an array
 #$ -N Strelka-$JOBNAME

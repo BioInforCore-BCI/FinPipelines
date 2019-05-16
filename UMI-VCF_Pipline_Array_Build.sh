@@ -251,7 +251,7 @@ echo "
 echo '
 module load java
 ## Set fgbio parameters - NB this needs to have enough ram to load the whole fastq files.
-fgbio="java -Xmx24g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /data/home/hfx472/Software/fgbio-0.6.1.jar --compression=0"
+fgbio="java -Xmx24g -XX:+AggressiveOpts -XX:+AggressiveHeap -jar /data/home/$USER/Software/fgbio-0.6.1.jar --compression=0"
 
 ## Get all the sample names from FASTQ_TRIM
 Samples=(ls FASTQ_TRIM/*)
@@ -334,7 +334,7 @@ echo "
 #$ -wd $DIR            # use current working directory
 #$ -V			# this makes it verbose
 #$ -j y			# Join output
-#$ -o /data/autoScratch/weekly/hfx472   # specify an output file
+#$ -o /data/scratch/$USER   # specify an output file
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
 #$ -l h_rt=8:0:0	# Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
@@ -532,7 +532,7 @@ module load annovar
 module load java
 
 ## Constants
-varScan=/data/home/hfx472/Software/VarScan/VarScan.v2.4.3.jar
+varScan=/data/home/$USER/Software/VarScan/VarScan.v2.4.3.jar
 refGenome=/data/BCI-Haemato/Refs/GRCh37/hg37.fa
 
 ## get recalibrated Bam file

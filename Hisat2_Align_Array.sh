@@ -69,7 +69,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/autoScratch/weekly/$USER/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
 #$ -pe smp 4		# Request 4 CPU cores
@@ -99,6 +99,10 @@ READ2=$Sample/*R2*
 outBam=$DIR/Alignment/$(basename $Sample).bam
 
 time $HISAT2 -p 4 \
+	--rg ID:$Sample \
+	--rg SM:$Sample \
+	--rg PL:ILLUMINA \
+	--rg LB:$Sample \
 	--dta \
 	-x $referenceindex \
 	--known-splicesite-infile $refSites \

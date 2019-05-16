@@ -53,7 +53,7 @@ while [ "$1" != "" ]; do
 done
 
 # Job script files
-#jobOutputDir=/data/autoScratch/weekly/hfx472/
+#jobOutputDir=/data/scratch/$USER/
 trimJob=$jobOutputDir/$jobName\Trim_Job.$today\.sh
 # Guess at the max number of samples TODO I should probably change this to be input on formation as this requires the samples to have been sorted already.
 # ls doesn't actually do anything here, except occupy the first space [0] in the array. Without it ${FILES[1]} returns the second sample etc ...

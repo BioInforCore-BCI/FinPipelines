@@ -4,7 +4,7 @@ today=`date +%Y-%m-%d`
 DIR=$PWD
 JOBNAME=FASTQC
 MODE=fastq
-jobOutputDir=/data/autoScratch/weekly/$USER
+jobOutputDir=/data/scratch/$USER
 AUTOSTART=0
 
 while [ "$1" != "" ]; do
@@ -53,7 +53,7 @@ MAX=$(echo ${#FILES[@]})
 MAX=$( expr $MAX - 1 )
 
 JobScript=$DIR/Fastqc-$today-array.sh
-jobOutputDir=/data/autoScratch/weekly/hfx472/
+jobOutputDir=/data/scratch/$USER/
 
 echo "
 #!/bin/sh

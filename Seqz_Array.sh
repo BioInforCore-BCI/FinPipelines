@@ -56,7 +56,7 @@ while [ "$1" != "" ]; do
         shift
 done
 
-varScan=/data/home/hfx472/Software/VarScan/VarScan.v2.4.3.jar
+varScan=/data/home/$USER/Software/VarScan/VarScan.v2.4.3.jar
 
 ## Output job script in project root dir
 JOBDIR=$DIR
@@ -76,7 +76,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR				# use current working directory
 #$ -V                   		# this makes it verbose
-#$ -o /data/autoScratch/weekly/hfx472   # specify an output file
+#$ -o /data/scratch/$USER   # specify an output file
 #$ -j y                 		# and put all output (inc errors) into it
 #$ -m a                 		# Email on abort
 #$ -pe smp 1            		# Request 1 CPU cores

@@ -72,7 +72,7 @@ else
 fi
 
 ## Store job files in the job directory.
-#JOBDIR=/data/autoScratch/weekly/hfx472/
+#JOBDIR=/data/scratch/$USER/
 JOBDIR=$DIR
 
 ## Names for the job files.
@@ -141,7 +141,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/autoScratch/weekly/hfx472/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
 #$ -pe smp 8		# Request 8 CPU cores
@@ -209,8 +209,8 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/autoScratch/weekly/hfx472/        # specify an output file - change 'outputfile.out'
-#$ -e /data/autoScratch/weekly/hfx472/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
+#$ -e /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
 #$ -m a			# email on abort
 #$ -pe smp 1		# Request 1 CPU cores
 #$ -l h_rt=240:0:0	# Request 240 hour runtime (upto 240 hours)
@@ -258,7 +258,7 @@ fi
 echo ####MESS Step 2: Make Bam
 ## If the bam file does not exist or is smaller than 0 and the sam size is greater than 0 run the sort.
 if ! [[ -s $outputbam ]] && [[ -s $outputsam ]]; then
-	time java -Xmx16g -Djava.io.tmpdir=/data/autoScratch/weekly/hfx472 -jar ~/Software/picard.jar SortSam \
+	time java -Xmx16g -Djava.io.tmpdir=/data/scratch/$USER -jar ~/Software/picard.jar SortSam \
 		SO=coordinate \
 		INPUT=$outputsam \
 		OUTPUT=$outputbam \
@@ -286,7 +286,7 @@ echo "
 #!/bin/bash
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/autoScratch/weekly/hfx472/     # specify an output file
+#$ -o /data/scratch/$USER/     # specify an output file
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores
@@ -302,9 +302,9 @@ echo '
 ## There are problems with system java so load the newer version here
 module load java
 
-GATK=/data/home/hfx472/Software/GenomeAnalysisTK.jar
-PICARD=/data/home/hfx472/Software/picard.jar
-TEMP_FILES=/data/autoScratch/weekly/hfx472
+GATK=/data/home/$USER/Software/GenomeAnalysisTK.jar
+PICARD=/data/home/$USER/Software/picard.jar
+TEMP_FILES=/data/scratch/$USER
 
 ## the ls here does not actually do anything except take up ${Sample[0]} in the list.
 ## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.

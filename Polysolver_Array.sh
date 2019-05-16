@@ -58,7 +58,7 @@ echo "
 #$ -l h_rt=48:0:0	# Request 48 hour runtime. Over estimated for now, change later.
 #$ -l h_vmem=4G         # Request 4GB RAM PER CORE
 #$ -m a                 # email on abort
-#$ -o /data/autoScratch/weekly/hfx472/
+#$ -o /data/scratch/$USER/
 #$ -j y
 #$ -t 1-$MAX
 #$ -N $JobName\_Polysolver
