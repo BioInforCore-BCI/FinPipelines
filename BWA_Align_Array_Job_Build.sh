@@ -97,15 +97,15 @@ if [[ TRIM -eq 1 ]]; then
 
 	echo "
 	#!/bin/sh
-	#$ -wd $DIR		# use current working directory
-	#$ -V			# this makes it verbose
-	#$ -o $jobOutputDir	# specify an output file
-	#$ -j y			# and put all output (inc errors) into it
-	#$ -m a			# Email on abort
-	#$ -pe smp 1		# Request 1 CPU cores
-	#$ -l h_rt=8:0:0	# Request 4 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
-	#$ -l h_vmem=4G		# Request 4G RAM / Core
-	#$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
+	#$ -wd $DIR			# use current working directory
+	#$ -V				# this makes it verbose
+	#$ -o /data/scratch/$USER/	# specify an output file
+	#$ -j y				# and put all output (inc errors) into it
+	#$ -m a				# Email on abort
+	#$ -pe smp 1			# Request 1 CPU cores
+	#$ -l h_rt=8:0:0		# Request 4 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
+	#$ -l h_vmem=4G			# Request 4G RAM / Core
+	#$ -t 1-$MAX			# run an array job of all the samples listed in FASTQ_Raw
 	#$ -N BWA-$JOBNAME-Trim_Job
 	" > $TRIMJOB
 
