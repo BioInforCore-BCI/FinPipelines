@@ -100,7 +100,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o $jobOutputDir     # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores
@@ -184,7 +184,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o $jobOutputDir     # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 8            # Request 1 CPU cores
@@ -249,7 +249,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o $jobOutputDir     # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores

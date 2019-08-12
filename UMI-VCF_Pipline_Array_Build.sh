@@ -137,7 +137,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V			# this makes it verbose
-#$ -o 	# specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
@@ -192,15 +192,15 @@ fi
 
 echo "
 #!/bin/sh
-#$ -wd $DIR		# use current working directory
-#$ -V			# this makes it verbose
-#$ -o 	# specify an output file
-#$ -j y			# and put all output (inc errors) into it
-#$ -m a			# Email on abort
-#$ -pe smp 8		# Request 1 CPU cores
-#$ -l h_rt=8:0:0	# Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
-#$ -l h_vmem=4G		# Request 4G RAM / Core
-#$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
+#$ -wd $DIR			# use specified Dir
+#$ -V				# this makes it verbose
+#$ -o /data/scratch/$USER/
+#$ -j y				# and put all output (inc errors) into it
+#$ -m a				# Email on abort
+#$ -pe smp 1			# Request 1 CPU cores
+#$ -l h_rt=24:0:0		# Request 24 hour runtime 
+#$ -l h_vmem=24G		# Request 24G RAM / Core
+#$ -t 1-$MAX			# run an array job of all the samples listed in FASTQ_Raw
 #$ -N $jobName-Align_Job
 
 refIndex=$refIndex" > $alignJob
@@ -218,17 +218,20 @@ echo $Sample
 if ! [[ -d Alignment ]];then mkdir Alignment; fi
 
 # Align the trimmed FASTQ 
-time bwa mem -t 8 -M $refIndex \
+time bwa mem -t 1 -M $refIndex \
 -R "@RG\tID:$Sample\tLB:$Sample\tSM:$Sample\tPL:Illumina" \
-FASTQ_TRIM/$Sample/*val_1* FASTQ_TRIM/$Sample/*val_2* |
+FASTQ_TRIM/$Sample/*val_1* FASTQ_TRIM/$Sample/*val_2*  > Alignment/$Sample.tmp.sam ||
+        { echo Alignment Failed;
+                rm Alignment/$Sample.tmp.sam;
+                exit 1; }
 # Sort aligned file by coordinate
-time java -Xmx4g -jar ~/Software/picard.jar SortSam \
+time java -Xmx24g -jar ~/Software/picard.jar SortSam \
         SORT_ORDER=coordinate \
-	I=/dev/stdin \
-	O=Alignment/$Sample.bam || 
-	{ echo Failed to align, removing Alignment/$Sample.bam;
-		rm Alignment/$Sample.bam;
-		exit 1; }
+        I=Alignment/$Sample.tmp.sam \
+        O=Alignment/$Sample.bam && rm Alignment/$Sample.tmp.sam ||
+        { echo Failed to align, removing Alignment/$Sample.bam;
+                rm Alignment/$Sample.bam;
+                exit 1; }
 ' >> $alignJob
 
 ##
@@ -239,7 +242,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V			# this makes it verbose
-#$ -o 	# specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
@@ -334,7 +337,7 @@ echo "
 #$ -wd $DIR            # use current working directory
 #$ -V			# this makes it verbose
 #$ -j y			# Join output
-#$ -o /data/scratch/$USER   # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -m a			# Email on abort
 #$ -pe smp 1		# Request 1 CPU cores
 #$ -l h_rt=8:0:0	# Request 8 hour runtime (This is an overestimation probably. Alter based on your needs.) 
@@ -373,7 +376,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o      # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 8            # Request 1 CPU cores
@@ -412,7 +415,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o      # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores
@@ -514,7 +517,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o      # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 8            # Request 1 CPU cores
@@ -577,7 +580,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
 #$ -V                   # this makes it verbose
-#$ -o      # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores

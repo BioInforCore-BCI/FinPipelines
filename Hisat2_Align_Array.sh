@@ -69,7 +69,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
 #$ -pe smp 4		# Request 4 CPU cores

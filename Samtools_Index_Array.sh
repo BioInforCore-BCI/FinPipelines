@@ -43,7 +43,7 @@ echo "
 #$ -pe smp 1		# Can't multithread
 #$ -l h_rt=4:0:0	# Should only take a few hours, ask for 4 to be safe.
 #$ -l h_vmem=1G		# Shouldn't need much ram ask for 1 G
-#$ -o /dev/null		# Destroy output
+#$ -o /data/scratch/$USER/
 #$ -j y			# Join error and output
 #$ -m a			# Email on abort
 #$ -t 1-$MAX		# Set as array

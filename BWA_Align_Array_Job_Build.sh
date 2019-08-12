@@ -99,7 +99,7 @@ if [[ TRIM -eq 1 ]]; then
 	#!/bin/sh
 	#$ -wd $DIR		# use current working directory
 	#$ -V			# this makes it verbose
-	#$ -o $jobOutputDir	# specify an output file
+	#$ -o /data/scratch/$USER/
 	#$ -j y			# and put all output (inc errors) into it
 	#$ -m a			# Email on abort
 	#$ -pe smp 1		# Request 1 CPU cores
@@ -141,7 +141,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
 #$ -pe smp 8		# Request 8 CPU cores
@@ -209,7 +209,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/
 #$ -e /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
 #$ -m a			# email on abort
 #$ -pe smp 1		# Request 1 CPU cores
@@ -286,7 +286,7 @@ echo "
 #!/bin/bash
 #$ -wd $DIR		# use current working directory
 #$ -V                   # this makes it verbose
-#$ -o /data/scratch/$USER/     # specify an output file
+#$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
 #$ -pe smp 1            # Request 1 CPU cores

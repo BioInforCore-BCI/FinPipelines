@@ -40,7 +40,7 @@ echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
 #$ -V			# this makes it verbose
-#$ -o /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
+#$ -o /data/scratch/$USER/
 #$ -j y			# Join output
 #$ -m a                 # email on abort
 #$ -pe smp 1		# Request 1 CPU cores

@@ -1,11 +1,17 @@
 #!/bin/python
 
 import glob, os
+import sys
 from natsort import natsorted
 ############################################
 ## Constants
 ############################################
-annotFile="Annotation.out.hg19_multianno.txt"
+if len(sys.argv) > 1:
+	annotFile = sys.argv[1]
+else:
+	print "no file specified, using default"
+	annotFile="Annotation.out.hg19_multianno.txt"
+
 ## Variant Headers
 STRELKA_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tNORMAL\tTUMOR"
 VARSCAN_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
@@ -13,7 +19,7 @@ VARSCAN_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
 # Load unique annotated mutations
 class CombineAnnotations:
 
-	def __init__(self, dataType="varscan", annotFile="Annotation.out.hg19_multianno.txt", pattern="*.pass.*"):
+	def __init__(self, dataType="varscan", annotFile=annotFile, pattern="*.pass.*"):
 		
 		self.annot = self.loadAnnot(annotFile)
 		self.mutations = self.loadMutation(pattern)
