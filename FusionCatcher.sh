@@ -65,11 +65,11 @@ echo "
 #$ -l h_vmem=36G		# Request 4G RAM / Core
 #$ -t 1-$MAX			# run an array job of all the samples listed in FASTQ_Raw
 ##$ -tc 10			# You may want to set a maximum number of concurrant tasks.
-#$ -N Poor_Risk_Fusion
+#$ -N $JOBNAME
 
 FOLDERS=( ls $fastqDIR/* )
 REFDIR=$REFDIR
-" > $DIR/$JOBNAME_FC_Array.sh
+" > $DIR/$JOBNAME\_FC_Array.sh
 
 echo '
 FOLDER=${FOLDERS[${SGE_TASK_ID}]}
@@ -86,5 +86,5 @@ time ~/Software/fusioncatcher/bin/fusioncatcher \
 
 if [[ $AUTOSTART -eq 1 ]]; then
 	echo autostarting Fusion Catcher
-	qsub $DIR/$JOBNAME_FC_Array.sh
+	qsub $DIR/$JOBNAME\_FC_Array.sh
 fi
