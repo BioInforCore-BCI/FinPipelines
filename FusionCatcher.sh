@@ -53,7 +53,7 @@ FILES=(ls $DIR/$fastqDIR/*)
 MAX=$(echo ${#FILES[@]})
 MAX=$( expr $MAX - 1 )
 
-echo "
+echo "\
 #!/bin/sh
 #$ -wd $DIR			# Set wd
 #$ -V                   	# this makes it verbose
@@ -82,7 +82,7 @@ time ~/Software/fusioncatcher/bin/fusioncatcher \
 	-i $FOLDER \
 	-p 1 \
 	-o Fusion/$sample
-' >> $DIR/$JOBNAME_FC_Array.sh
+' >> $DIR/$JOBNAME\_FC_Array.sh
 
 if [[ $AUTOSTART -eq 1 ]]; then
 	echo autostarting Fusion Catcher
