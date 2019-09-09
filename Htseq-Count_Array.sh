@@ -34,7 +34,7 @@ while [ "$1" != "" ]; do
 -a | --auto-start               Automatically start the jobs on creation (default off)
 -n | --name                     The name for the job (default BWA_Align)
 -d | --directory                The root directory for the project (default $PWD)
--g | --gtf			gtf file (default GRCh37/Annotation/hg38.gtf)
+-g | --gtf			gtf file (default GRCh38/Annotation/hg38.gtf)
 -h | --help                     Display this message and exit"
                                         exit 1
 

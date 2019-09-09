@@ -6,20 +6,45 @@ from natsort import natsorted
 ############################################
 ## Constants
 ############################################
-if len(sys.argv) > 1:
-	annotFile = sys.argv[1]
-else:
-	print "no file specified, using default"
-	annotFile="Annotation.out.hg19_multianno.txt"
+#if len(sys.argv) > 1:
+#	annotFile = sys.argv[1]
+#else:
+#	print "no file specified, using default"
+Constants = { 
+		"annotFile":"Annotation.out.hg19_multianno.txt",
+		"dataType":"varscan"
+}
+Options={
+		"-f":"annotFile",
+		"-t":"dataType"
+}
 
 ## Variant Headers
 STRELKA_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tNORMAL\tTUMOR"
 VARSCAN_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
 
+## Arg Parser
+def argParse(arguments):
+	"""takes a list of arguments and adjusts the Contants dictionary"""
+	## Make sure we're using the gloabal Contants 
+	global Constants
+	## Until only the script name remains
+	while len(arguments) > 1:
+		## Remove the next argument
+		arg=arguments.pop(1)
+		## if it's in the Options dictionary
+		if arg in Options.keys():
+		        ## change the corresponding Constant to the next argument
+			Constants[Options[arg]]=arguments.pop(1)
+
+
+
 # Load unique annotated mutations
 class CombineAnnotations:
 
-	def __init__(self, dataType="varscan", annotFile=annotFile, pattern="*.pass.*"):
+	def __init__(self, dataType, annotFile, pattern="*.pass.*"):
+		"""dataType is a string of either:
+			"varscan" OR "strelka" """
 		
 		self.annot = self.loadAnnot(annotFile)
 		self.mutations = self.loadMutation(pattern)
@@ -75,16 +100,13 @@ class CombineAnnotations:
 			outfile.write(line)
 		outfile.close()
 
+
 if __name__ == "__main__":
 
 	import sys
 
 	if len(sys.argv) > 1:
+		
+		argParse(sys.argv)
 
-		head=sys.argv[1]
-
-		CombineAnnotations(dataType=head)
-
-	else:
-	
-		CombineAnnotations()
+	CombineAnnotations(Constants["dataType"], Constants["annotFile"])
