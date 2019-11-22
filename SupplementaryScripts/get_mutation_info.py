@@ -2,6 +2,7 @@
 
 import glob, os
 import sys
+import gzip
 from natsort import natsorted
 ############################################
 ## Constants
@@ -12,11 +13,13 @@ from natsort import natsorted
 #	print "no file specified, using default"
 Constants = { 
 		"annotFile":"Annotation.out.hg19_multianno.txt",
-		"dataType":"varscan"
+		"dataType":"varscan",
+		"pattern":"*.pass.*"
 }
 Options={
 		"-f":"annotFile",
-		"-t":"dataType"
+		"-t":"dataType",
+		"-p":"pattern"
 }
 
 ## Variant Headers
@@ -42,10 +45,9 @@ def argParse(arguments):
 # Load unique annotated mutations
 class CombineAnnotations:
 
-	def __init__(self, dataType, annotFile, pattern="*.pass.*"):
+	def __init__(self, dataType, annotFile, pattern):
 		"""dataType is a string of either:
 			"varscan" OR "strelka" """
-		
 		self.annot = self.loadAnnot(annotFile)
 		self.mutations = self.loadMutation(pattern)
 		self.combineMutation(dataType)
@@ -64,12 +66,15 @@ class CombineAnnotations:
 				rv[KEY]=line.rstrip()
 		return rv
  
-	def loadMutation(self, pattern="*.pass.*"):
+	def loadMutation(self, pattern):
 		print "Loading Mutations"	
 		rv ={}
 		for file in glob.glob(pattern):
-			print file	
-			FILE = open(file)
+			print file
+			if file.split(".")[-1] == "gz":
+				FILE = gzip.open(file)
+			else:
+				FILE = open(file)
 			sampleFile = FILE.readlines()
 			FILE.close()
 			for mutant in sampleFile:
@@ -91,8 +96,9 @@ class CombineAnnotations:
 		print "Writing data"
 		rv = []
 		for key, mutation in natsorted(self.annot.iteritems()):
-			for sample, values in natsorted(self.mutations[key].iteritems()):
-				rv.append('\t'.join([mutation, sample, str(len(self.mutations[key].keys())), values]))
+			if self.mutations.has_key(key):
+				for sample, values in natsorted(self.mutations[key].iteritems()):
+					rv.append('\t'.join([mutation, sample, str(len(self.mutations[key].keys())), values]))
 		outfile=open("get_mutation_info.out.txt", "w")
 		
 		outfile.write(self.header + "\n")
@@ -109,4 +115,4 @@ if __name__ == "__main__":
 		
 		argParse(sys.argv)
 
-	CombineAnnotations(Constants["dataType"], Constants["annotFile"])
+	CombineAnnotations(Constants["dataType"], Constants["annotFile"], Constants["pattern"])

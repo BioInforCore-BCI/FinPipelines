@@ -549,7 +549,7 @@ outSnp=VCF/$Sample\_snp.vcf
 outIndel=VCF/$Sample\_indel.vcf
 outSnp_fil=VCF/$Sample\.pass.snp.vcf
 outIndel_fil=VCF/$Sample\.pass.indel.vcf
-$Bam=Alignment/$Sample\.recalib.bam
+Bam=Alignment/$Sample\.recalib.bam
 
 time samtools mpileup -B -q 40 -l $BED -f $refGenome $Bam |
 java -jar $varScan mpileup2snp \
