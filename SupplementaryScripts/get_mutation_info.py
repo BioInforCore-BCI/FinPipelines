@@ -23,6 +23,7 @@ Options={
 }
 
 ## Variant Headers
+MUTECT_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tTUMOR\tNORMAL"
 STRELKA_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tNORMAL\tTUMOR"
 VARSCAN_HEAD="CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
 
@@ -91,6 +92,8 @@ class CombineAnnotations:
 			self.header += "\tSample\tCount\t" + VARSCAN_HEAD
 		elif dataType == "strelka":
 			self.header += "\tSample\tCount\t" + STRELKA_HEAD
+		elif dataType == "mutect":
+			self.header += "\tSample\tCount\t" + MUTECT_HEAD
 		else:
 			self.header += "\tSample\tCount"
 		print "Writing data"
