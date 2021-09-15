@@ -54,7 +54,7 @@ class CombineAnnotations:
 		self.combineMutation(dataType)
 
 	def loadAnnot(self, file):
-		print "Loading Annotations"
+		print("Loading Annotations")
 
 		rv = {}
 		FILE = open( file )
@@ -63,15 +63,15 @@ class CombineAnnotations:
 		self.header = Data[0].rstrip()
 		for line in Data[1:]:
 			KEY='\t'.join(line.rstrip().split('\t')[0:5])
-			if not rv.has_key(KEY):
+			if not KEY in rv:
 				rv[KEY]=line.rstrip()
 		return rv
  
 	def loadMutation(self, pattern):
-		print "Loading Mutations"	
+		print("Loading Mutations")
 		rv ={}
 		for file in glob.glob(pattern):
-			print file
+			print(file)
 			if file.split(".")[-1] == "gz":
 				FILE = gzip.open(file)
 			else:
@@ -81,9 +81,9 @@ class CombineAnnotations:
 			for mutant in sampleFile:
 				sampleName = file.split(".")[0]
 				KEY='\t'.join(mutant.rstrip().split('\t')[0:5])
-				if not rv.has_key(KEY):
+				if not KEY in rv:
 					rv[KEY] = {}
-				if not rv[KEY].has_key(sampleName):			
+				if not sampleName in rv[KEY]:			
 					rv[KEY][sampleName]= mutant
 		return rv
 
@@ -96,11 +96,11 @@ class CombineAnnotations:
 			self.header += "\tSample\tCount\t" + MUTECT_HEAD
 		else:
 			self.header += "\tSample\tCount"
-		print "Writing data"
+		print("Writing data")
 		rv = []
-		for key, mutation in natsorted(self.annot.iteritems()):
-			if self.mutations.has_key(key):
-				for sample, values in natsorted(self.mutations[key].iteritems()):
+		for key, mutation in natsorted(self.annot.items()):
+			if key in self.mutations:
+				for sample, values in natsorted(self.mutations[key].items()):
 					rv.append('\t'.join([mutation, sample, str(len(self.mutations[key].keys())), values]))
 		outfile=open("get_mutation_info.out.txt", "w")
 		
