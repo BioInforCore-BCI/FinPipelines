@@ -99,7 +99,6 @@ if [[ TRIM -eq 1 ]]; then
 	#!/bin/sh
 <<<<<<< HEAD
 	#$ -wd $DIR		# use current working directory
-	#$ -V			# this makes it verbose
 	#$ -o /data/scratch/$USER/
 	#$ -j y			# and put all output (inc errors) into it
 	#$ -m a			# Email on abort
@@ -109,7 +108,6 @@ if [[ TRIM -eq 1 ]]; then
 	#$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
 =======
 	#$ -wd $DIR			# use current working directory
-	#$ -V				# this makes it verbose
 	#$ -o /data/scratch/$USER/	# specify an output file
 	#$ -j y				# and put all output (inc errors) into it
 	#$ -m a				# Email on abort
@@ -152,7 +150,6 @@ fi
 echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a
@@ -220,7 +217,6 @@ fi
 echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -e /data/scratch/$USER/        # specify an output file - change 'outputfile.out'
 #$ -m a			# email on abort
@@ -297,7 +293,6 @@ fi
 echo "
 #!/bin/bash
 #$ -wd $DIR		# use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort

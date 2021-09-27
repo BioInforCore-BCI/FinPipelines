@@ -39,7 +39,6 @@ MAX=$(echo ${#BAMS[@]})
 echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
-#$ -V			# this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y			# Join output
 #$ -m a                 # email on abort

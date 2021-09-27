@@ -56,7 +56,6 @@ MAX=$( expr $MAX - 1 )
 echo "\
 #!/bin/sh
 #$ -wd $DIR			# Set wd
-#$ -V                   	# this makes it verbose
 #$ -o /data/scratch/hfx472/
 #$ -j y                 	# and put all output (inc errors) into it
 #$ -m a                 	# Email on abort

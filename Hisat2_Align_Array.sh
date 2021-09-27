@@ -68,7 +68,6 @@ HISAT2JOB=$JOBDIR/$JOBNAME-$today-hisat2.sh
 echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a

@@ -136,7 +136,6 @@ MAX=$( expr $MAX - 1 )
 echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
-#$ -V			# this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
@@ -193,7 +192,6 @@ fi
 echo "
 #!/bin/sh
 #$ -wd $DIR			# use specified Dir
-#$ -V				# this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y				# and put all output (inc errors) into it
 #$ -m a				# Email on abort
@@ -241,7 +239,6 @@ time java -Xmx24g -jar ~/Software/picard.jar SortSam \
 echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
-#$ -V			# this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort
@@ -335,7 +332,6 @@ paste Stats/UMIcount/*.UMIcount | sed -e "s/cD:i://g" >> Stats/UMIcount/AllUMICo
 echo "
 #!/bin/sh
 #$ -wd $DIR            # use current working directory
-#$ -V			# this makes it verbose
 #$ -j y			# Join output
 #$ -o /data/scratch/$USER/
 #$ -m a			# Email on abort
@@ -375,7 +371,6 @@ fi
 echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
@@ -414,7 +409,6 @@ java -Xmx4g -jar ~/Software/picard.jar SortSam \
 echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
@@ -516,7 +510,6 @@ perl $SuppScirptDir/get_coverage_info.pl $BED
 echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
@@ -579,7 +572,6 @@ convert2annovar.pl --format vcf4 $outIndel --includeinfo --filter PASS --withzyg
 echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort

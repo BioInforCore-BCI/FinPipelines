@@ -58,7 +58,6 @@ jobOutputDir=/data/scratch/$USER/
 echo "
 #!/bin/sh
 #$ -wd $DIR		# use current working directory
-#$ -V			# this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y			# and put all output (inc errors) into it
 #$ -m a			# Email on abort

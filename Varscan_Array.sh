@@ -99,7 +99,6 @@ varFiltJob=$jobName\.03.varFilt.$today\.sh
 echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
@@ -183,7 +182,6 @@ perl $SuppScirptDir/get_coverage_info.pl $BED
 echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort
@@ -248,7 +246,6 @@ convert2annovar.pl --format vcf4 $outIndel --includeinfo --filter PASS --withzyg
 echo "
 #!/bin/sh
 #$ -wd $DIR             # use current working directory
-#$ -V                   # this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 # and put all output (inc errors) into it
 #$ -m a                 # Email on abort

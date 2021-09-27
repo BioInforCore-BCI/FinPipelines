@@ -48,7 +48,6 @@ HTSEQ=$DIR/HTSEQ_$JOBNAME\_count_array_$today\.sh
 echo "
 #!/bin/sh
 #$ -wd $DIR							# set working directory
-#$ -V                   					# this makes it verbose
 #$ -o /data/scratch/$USER/
 #$ -j y                 					# and put all output (inc errors) into it
 #$ -m a                 					# Email on abort
