@@ -2,17 +2,30 @@
 Scripts that generate array jobs for pipelines.\
 Avaliable pipelines:
 
-1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
+## QC
+
 1. [Fastqc_array.sh](#fastqc_arraysh)
-1. [FusionCatcher.sh](#FusionCatcher)
-1. [HaplotypeCaller.sh](#HaplotypeCaller)
-1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
+1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
+
+## Align FASTQ
+1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
+1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
+
+## RNAseq
+
+1. [FusionCatcher.sh](#FusionCatcher)
 1. [Htseq-Count_Array.sh](#htseq-count_arraysh)
+
+
+## Variant Calling
+1. [HaplotypeCaller.sh](#HaplotypeCaller)
 1. [Strelka_Somatic_Array.sh](#strelka_somatic_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
+
 1. [Polysolver_Array.sh](#polysolver_arraysh)
-1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
+
+### Structural Variant Calling
 1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
 
 
