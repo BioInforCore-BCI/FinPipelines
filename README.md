@@ -2,31 +2,37 @@
 Scripts that generate array jobs for pipelines.\
 Avaliable pipelines:
 
-## QC
+### QC
 
 1. [Fastqc_array.sh](#fastqc_arraysh)
-1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
+1. [Samtools_flagstat_Array.sh](#Samtools_flagstat_Array.sh)
 
-## Align FASTQ
+### Align FASTQ
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
+1. [Trim_Array_Build.sh](#trim_array_buildsh)
 1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
+1. [Post_Alignment_Processing.sh](#post_alignment_processingsh)  
+1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
 
-## RNAseq
-
-1. [FusionCatcher.sh](#FusionCatcher)
+### RNAseq
 1. [Htseq-Count_Array.sh](#htseq-count_arraysh)
+1. [FusionCatcher.sh](#fusionCatcher)
 
-
-## Variant Calling
-1. [HaplotypeCaller.sh](#HaplotypeCaller)
+### Variant Calling
+1. [HaplotypeCaller.sh](#haplotypecallersh)
+1. [Varscan_Array.sh](#varscan_arraysh)
+1. [Strelka_Germline_Array.sh](#strelka_germline_arraysh)
 1. [Strelka_Somatic_Array.sh](#strelka_somatic_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
 
 1. [Polysolver_Array.sh](#polysolver_arraysh)
 
-### Structural Variant Calling
+#### Structural Variant Calling
 1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
+
+#### CNA calling
+1. [Seqz_Array.sh](#seqz_arraysh)
 
 
 
