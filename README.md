@@ -8,9 +8,10 @@ Avaliable pipelines:
 1. [Samtools_flagstat_Array.sh](#Samtools_flagstat_Array.sh)
 
 ### Align FASTQ
+
+1. [Trim_Array_Build.sh](#trim_array_buildsh)
 1. [BWA_Align_Array_Job_Build.sh](#bwa_align_array_job_buildsh)  
 1. [Hisat2_Align_Array.sh](#hisat2_align_arraysh)
-1. [Trim_Array_Build.sh](#trim_array_buildsh)
 1. [UMI-VCF_Pipline_Array_Build.sh](#umi-vcf_pipline_array_buildsh)  
 1. [Post_Alignment_Processing.sh](#post_alignment_processingsh)  
 1. [Samtools_Index_Array.sh](#samtools_index_arraysh)
@@ -100,6 +101,39 @@ Options
 
 # Align FASTQ
 
+## Trim_Array_Build.sh
+
+This will create a array job that will trim fastq files. The trimed FASTQ files will be moved to FASTQ_TRIM.
+
+### Prerequisites
+
+The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files. You may need to cat the lanes together.
+
+i.e.
+
+Project root | raw | sample | .fastq.gz
+--- | --- | --- | ---
+RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+|  |  |  | Sample1_R2.fastq.gz
+| |  | Sample2 | Sample2_R1.fastq.gz
+|  |  |  | Sample2_R2.fastq.gz
+
+The avaliable options are as follow:
+```bash
+-a | --autostart	Automaticall start the jobs, holding jobs so they run in the correct order
+-n | --name		Sets the job name (default - UMI-VCF-$PWD)
+-p | --adapter		Adapter to trim (illumina)
+-d | --directory	Root directory for the project
+-r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
+-s | --setup 		Run the set up (cat the files together and create sample directories) (default off)
+-f | --fastq-suffix 	Suffix for the fastq files (default .fastq.gz)
+-h | --help		Display this message"
+```
+
+
+***
+
+
 ## BWA_Align_Array_Job_Build.sh
 
 This script will automatically generate job scripts to be run on apocrita that will take fastq files, align them with bwa-aln, mark duplicates using picard tools and then realign around indels using GATK.
@@ -127,6 +161,34 @@ The avaliable options are as follow:
 -h | --help		Display this message and exit"
 ```
 If the script is set to autorun then it will load the SAI arrays straight away, otherwise the job files will just sit there waiting for you. The jobs *should* be submitted to the server as they previous job finishes but keep an eye on it.
+
+***
+
+## Hisat2_Align_Array.sh
+
+This will create a array job that will align fastq files using hisat2.
+
+### Prerequisites
+
+The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files. You may need to cat the lanes together.
+
+i.e.
+
+Project root | raw | sample | .fastq.gz
+--- | --- | --- | ---
+RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+|  |  |  | Sample1_R2.fastq.gz
+| |  | Sample2 | Sample2_R1.fastq.gz
+|  |  |  | Sample2_R2.fastq.gz
+
+The avaliable options are as follow:
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name 	           	The name for the job (default BWA_Align)
+-d | --directory 	      	The root directory for the project (default $PWD)
+-r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh38/)
+-h | --help 			Display this message and exit"
+```
 
 ***
 
@@ -179,33 +241,6 @@ The avaliable options are as follow:
 -f | --fastq-suffix   Suffix for the fastq files (default .fastq.gz)
 -h | --help           Display this message
 ```
-***
-## Hisat2_Align_Array.sh
-
-This will create a array job that will align fastq files using hisat2.
-
-### Prerequisites
-
-The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files. You may need to cat the lanes together.
-
-i.e.
-
-Project root | raw | sample | .fastq.gz
---- | --- | --- | ---
-RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
-|  |  |  | Sample1_R2.fastq.gz
-| |  | Sample2 | Sample2_R1.fastq.gz
-|  |  |  | Sample2_R2.fastq.gz
-
-The avaliable options are as follow:
-```bash
--a | --auto-start               Automatically start the jobs on creation (default off)
--n | --name 	           	The name for the job (default BWA_Align)
--d | --directory 	      	The root directory for the project (default $PWD)
--r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh38/)
--h | --help 			Display this message and exit"
-```
-
 ***
 
 ## Htseq-Count_Array.sh
