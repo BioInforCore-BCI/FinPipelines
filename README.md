@@ -79,7 +79,7 @@ Options
 -a | --auto-start               Automatically start the jobs on creation (default on)
 -n | --name                     The name for the job (default Lumpy_Array)
 -m | --mode			The mode for the job (bam|fastq) (default fastq)
--d | --directory                The root directory for the project (default $PWD)"
+-d | --directory                The root directory for the project (default $PWD)
 ```
 
 ***
@@ -94,7 +94,7 @@ Options
 
 ```bash
 -n | --name                     The name for the job (default Lumpy_Array)
--d | --directory                The root directory for the project (default $PWD)"
+-d | --directory                The root directory for the project (default $PWD)
 ```
 
 ***
@@ -127,7 +127,7 @@ The avaliable options are as follow:
 -r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
 -s | --setup 		Run the set up (cat the files together and create sample directories) (default off)
 -f | --fastq-suffix 	Suffix for the fastq files (default .fastq.gz)
--h | --help		Display this message"
+-h | --help		Display this message
 ```
 
 ***
@@ -156,7 +156,7 @@ The avaliable options are as follow:
 -d | --directory	The root directory for the project (default $PWD)
 -r | --refdir		Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -t | -trim		Creates a job to trim the samples. Autostart will submit this job, not make sai (default off)
--h | --help		Display this message and exit"
+-h | --help		Display this message and exit
 ```
 If the script is set to autorun then it will load the SAI arrays straight away, otherwise the job files will just sit there waiting for you. The jobs *should* be submitted to the server as they previous job finishes but keep an eye on it.
 
@@ -185,7 +185,7 @@ The avaliable options are as follow:
 -n | --name 	           	The name for the job (default BWA_Align)
 -d | --directory 	      	The root directory for the project (default $PWD)
 -r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh38/)
--h | --help 			Display this message and exit"
+-h | --help 			Display this message and exit
 ```
 
 ***
@@ -270,7 +270,7 @@ Options:
 ```bash
 -n | --name			The name for the job (default BWA_Align)
 -d | --directory		The root directory for the project (default $PWD)
--h | --help			Display this message and exit"
+-h | --help			Display this message and exit
 ```
 
 ***
@@ -293,8 +293,30 @@ The avaliable options are as follow:
 -n | --name                     The name for the job (default BWA_Align)
 -d | --directory                The root directory for the project (default $PWD)
 -g | --gtf			gtf file (default GRCh37/Annotation/hg38.gtf)
--h | --help                     Display this message and exit"
+-h | --help                     Display this message and exit
 ```
+
+***
+
+## FusionCatcher.sh
+
+This will create an array job to run Fusion Catcher
+
+### Prerequisites
+
+Uses RNAseq FASTQ files
+
+The avaliable options are as follow:
+
+```bash
+-a | --auto-start 		Automatically start the jobs on creation (default off)
+-n | --name 	           	The name for the job (default BWA_Align)
+-f | --fastqDIR			The folder your FASTQ files are stored in (default $fastqDIR)
+-d | --directory 	      	The root directory for the project (default $PWD)
+-r | --refdir 			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-h | --help 			Display this message and exit
+```
+
 
 ***
 
@@ -383,7 +405,7 @@ Options avaliable:
 -n | --name                     The name for the job (default BWA_Align)
 -d | --directory                The root directory for the project (default $PWD)
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
--h | --help                     Display this message and exit"
+-h | --help                     Display this message and exit
 ```
 
 
@@ -420,7 +442,7 @@ Options avaliable:
 -n | --name                     The name for the job (default BWA_Align)
 -d | --directory                The root directory for the project (default $PWD)
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
--h | --help                     Display this message and exit"
+-h | --help                     Display this message and exit
 ```
 
 ***
@@ -475,7 +497,7 @@ Options
 ```bash
 -a | --auto-start               Automatically start the jobs on creation (default on)
 -n | --name                     The name for the job (default Lumpy_Array)
--d | --directory                The root directory for the project (default $PWD)"
+-d | --directory                The root directory for the project (default $PWD)
 ```
 ***
 
