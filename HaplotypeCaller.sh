@@ -6,7 +6,7 @@ JOBNAME=Mutect2_Pipeline_$DIR
 ## Location of reference files
 REFDIR=/data/BCI-Haemato/Refs/
 ## By Default use the hg37 reference genome
-REF=GRCh37
+REF=GRCh38
 ScirptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 AUTOSTART=0
 
@@ -39,7 +39,7 @@ while [ "$1" != "" ]; do
 -a | --auto-start		Automatically start the jobs on creation (default off)
 -n | --name			The name for the job (default BWA_Align)
 -d | --directory		The root directory for the project (default $PWD)
--r | --refdir			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-r | --refdir			Directory in BCI-Haemato/Refs containing the reference (default $REF)
 -h | --help			Display this message and exit"
                                         exit 1
                                         ;;
@@ -88,7 +88,7 @@ tumourBam=$(find Alignment/ -name "tumor*$Patient*bam" ) ||
 echo Normal File: $normalBam
 echo Tumour File: $tumourBam
 
-if [[ -s VCF/Mutect2/$Patient\.vcf ]]; then
+if [[ -s VCF/HaplotypeCaller/$Patient\.vcf ]]; then
         echo VCF already exists. Either you have run this already or there is a problem.
         exit 1
 fi
@@ -96,24 +96,30 @@ fi
 module load gatk/4.1.6.0
 module load annovar
 
-if ! [[ -d VCF/Mutect2 ]]; then mkdir -p VCF/Mutect2/; fi
+if ! [[ -d VCF/HaplotypeCaller ]]; then mkdir -p VCF/HaplotypeCaller/; fi
 
-time gatk --java-options "-Xmx4g" MuTect2 \
+time gatk --java-options "-Xmx4g" HaplotypeCaller \
         -R $reference \
-        -I:tumor $tumourBam \
-        -I:normal $normalBam \
-        -o VCF/Mutect2/$Patient.vcf || exit 1 
+        -I $tumourBam \
+        -O VCF/HaplotypeCaller/$Patient.vcf 
+	-ERC GVCF || exit 1 
 
-time gatk --java-options "-Xmx4g" FilterMutectCalls \
-        -O VCF/Mutect2/$Patient.filter.vcf
-        -V VCF/Mutect2/$Patient.vcf
+time gatk --java-options "-Xmx4g" GenotypeGVCFs \
+        -R $reference \
+        -V VCF/HaplotypeCaller/$Patient.vcf \
+        -O VCF/HaplotypeCaller/$Patient.Geno.vcf || exit 1
+
+time gatk VariantFiltration \
+	-V VCF/HaplotypeCaller/$Patient.Geno.vcf \
+	-O VCF/HaplotypeCaller/$Patient.filter.vcf | exit 1
+
 
 time convert2annovar.pl -format vcf4 \
 	-filter PASS \
 	--includeinfo \
 	--withfreq \
-	VCF/Mutect2/$Patient.filter.vcf \
-	-outfile VCF/Mutect2/$Patient.pass.vcf
+	VCF/HaplotypeCaller/$Patient.filter.vcf \
+	-outfile VCF/HaplotypeCaller/$Patient.pass.vcf
 
 
 

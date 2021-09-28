@@ -1,6 +1,8 @@
 #!/bin/bash
 today=`date +%Y-%m-%d`
 
+ArrayScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 DIR=$PWD
 JOBNAME=BWA_Align
 
@@ -53,8 +55,8 @@ MAX=$(echo ${#FILES[@]})
 MAX=$( expr $MAX - 1 )
 TotalSAI=$( expr $MAX + $MAX )
 
-## By Default use the hg37 reference genome
-if ! [[ $REF ]];then REF=GRCh37; fi
+## By Default use the hg38 reference genome
+if ! [[ $REF ]];then REF=GRCh38; fi
 
 REFDIR=$REFDIR/$REF
 
@@ -76,7 +78,7 @@ fi
 JOBDIR=$DIR
 
 ## Names for the job files.
-$TRIMJOB=$JOBDIR/$JOBNAME.$today.trim.sh
+TRIMJOB=$JOBDIR/$JOBNAME.$today.trim.sh
 READ1JOB=$JOBDIR/$JOBNAME.$today.read1.sh
 READ2JOB=$JOBDIR/$JOBNAME.$today.read2.sh
 COMBOJOB=$JOBDIR/$JOBNAME.$today.combo.sh
@@ -97,8 +99,7 @@ if [[ TRIM -eq 1 ]]; then
 
 	echo "
 	#!/bin/sh
-<<<<<<< HEAD
-	#$ -wd $DIR		# use current working directory
+	#$ -cwd			# use current working directory
 	#$ -o /data/scratch/$USER/
 	#$ -j y			# and put all output (inc errors) into it
 	#$ -m a			# Email on abort
@@ -106,16 +107,6 @@ if [[ TRIM -eq 1 ]]; then
 	#$ -l h_rt=8:0:0	# Request 4 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
 	#$ -l h_vmem=4G		# Request 4G RAM / Core
 	#$ -t 1-$MAX		# run an array job of all the samples listed in FASTQ_Raw
-=======
-	#$ -wd $DIR			# use current working directory
-	#$ -o /data/scratch/$USER/	# specify an output file
-	#$ -j y				# and put all output (inc errors) into it
-	#$ -m a				# Email on abort
-	#$ -pe smp 1			# Request 1 CPU cores
-	#$ -l h_rt=8:0:0		# Request 4 hour runtime (This shouldn't last more than a few minutes but in the case of large fastq might take longer)
-	#$ -l h_vmem=4G			# Request 4G RAM / Core
-	#$ -t 1-$MAX			# run an array job of all the samples listed in FASTQ_Raw
->>>>>>> a0b3c7110070d7e4fb6b28c25a02d54656319c4f
 	#$ -N BWA-$JOBNAME-Trim_Job
 	" > $TRIMJOB
 
@@ -290,146 +281,11 @@ if [[ $(ls Alignment/*.bam | wc -l ) -eq $MAX ]] && [[ $(qstat -r | grep Full | 
 fi
 ' >> $COMBOJOB
 
-echo "
-#!/bin/bash
-#$ -wd $DIR		# use current working directory
-#$ -o /data/scratch/$USER/
-#$ -j y                 # and put all output (inc errors) into it
-#$ -m a                 # Email on abort
-#$ -pe smp 1            # Request 1 CPU cores
-#$ -l h_rt=240:0:0	# Request 240 hour runtime (This is an overestimation probably. Alter based on your needs.)
-#$ -l h_vmem=16G	# Request 16G RAM / Core
-#$ -t 1-$MAX            # run an array job of all the samples listed in FASTQ_Raw
-#$ -N BWA-$JOBNAME-Realign
-reference=$reference
-dbsnp=$dbsnp
-" | tee $REALIGNJOB
+$ArrayScriptDir/Post_Alignment_Processing.sh \
+        -n $jobName\.01 \
+        -d $DIR \
+        -r $REF 
 
-echo '
-## There are problems with system java so load the newer version here
-module load java
-
-GATK=/data/home/$USER/Software/GenomeAnalysisTK.jar
-PICARD=/data/home/$USER/Software/picard.jar
-TEMP_FILES=/data/scratch/$USER
-
-## the ls here does not actually do anything except take up ${Sample[0]} in the list.
-## SGE_TASK_ID starts at 1 so rather than having to alter this just add something to that start.
-Samples=(ls FASTQ_Raw/*)
-## Extract the file name at the position of the array job task ID
-Sample=$(basename ${Samples[${SGE_TASK_ID}]})
-
-echo $Sample
-
-outputbam=Alignment/$Sample\.bam
-outputbammarked=Alignment/$Sample\.marked\.bam
-realignmentlist=Alignment/$Sample\.bam.list
-realignmentbam=Alignment/$Sample\.realigned.bam
-realignmentfixbam=Alignment/$Sample\.fixed.bam
-baserecaldata=Alignment/$Sample\.recal_data.grp
-recalioutbam=Alignment/$Sample\.recalib.bam
-
-## step 3: Marking PCR duplicates
-echo "####MESS Step 3: Marking PCR duplicates using Picard"
-time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD MarkDuplicates \
-	INPUT=$outputbam \
-	OUTPUT=$outputbammarked \
-	METRICS_FILE=$sampleName\.metrics.txt \
-	CREATE_INDEX=true \
-	VALIDATION_STRINGENCY=LENIENT \
-	MAX_RECORDS_IN_RAM=5000000 ||
-                ##If fails delete output and exit
-                { echo Marking duplicates failed removing $outputbammarked;
-                        rm $outputbammarked;
-                        exit 1 }
-
-## local alignment around indels
-echo "####MESS Step 4: local alignment around indels"
-echo "####MESS Step 4: first create a table of possible indels"
-time java -Xmx16g -jar $GATK -T RealignerTargetCreator \
-        -R $reference \
-        -o $realignmentlist \
-        -I $outputbammarked ||
-                ##If fails delete output and exit
-                { echo failed to create list removing $realignmentlist;
-                        rm $realignmentlist;
-                        exit 1 }
-
-if [[ $? -eq 0 ]] && [[ -s $outputbammarked ]];
-	then
-		rm $outputbam
-fi
-
-echo "####MESS Step 4: realign reads around those targets"
-time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $GATK \
-        -I $outputbammarked \
-        -R $reference \
-        -T IndelRealigner \
-        -targetIntervals $realignmentlist \
-        -o $realignmentbam  ||
-                ##If fails delete output and exit
-                { echo realign failed removing $realignmentbam;
-                        rm $realignmentbam;
-                        exit 1 }
-
-if [[ $? -eq 0 ]] && [[ -s $realignmentbam ]];
-	then
-		rm $outputbammarked
-fi
-
-echo "####MESS Step 4: fix paired end mate information using Picard"
-time java -Xmx16g -Djava.io.tmpdir=$TEMP_FILES -jar $PICARD FixMateInformation \
-        INPUT=$realignmentbam \
-        OUTPUT=$realignmentfixbam \
-        SO=coordinate \
-        VALIDATION_STRINGENCY=LENIENT \
-        CREATE_INDEX=true \
-	MAX_RECORDS_IN_RAM=5000000  ||
-                ##If fails delete output and exit
-                { echo Failed to fix bam removing $realignmentfixbam;
-                        rm $realignmentfixbam;
-                        exit 1 }
-
-if [[ $? -eq 0 ]] && [[ -s $realignmentfixbam ]];
-	then
-		rm $realignmentbam
-fi
-
-## base quality score recalibration
-echo "####MESS Step 5: base quality score recalibration"
-time java -Xmx16g -jar $GATK -T BaseRecalibrator \
-        -I $realignmentfixbam \
-        -R $reference \
-        -knownSites $dbsnp \
-        -o $baserecaldata ||
-                ##If fails delete output and exit
-                { echo Failed to recalibrate scores removing $baserecaldata;
-                        rm $baserecaldata;
-                        exit 1 }
-
-if ! [[ $? -eq 0 ]]; then exit 1; fi
-
-echo "####MESS Step 5: print recalibrated reads into BAM"
-time java -Xmx16g -jar $GATK -T PrintReads \
-        -R $reference \
-        -I $realignmentfixbam \
-        -BQSR $baserecaldata \
-        -o $recalioutbam ||
-                ##If fails delete output and exit
-                { echo Failed to output recalib bam removing $recalioutbam;
-                        rm $recalioutbam;
-                        exit 1 }
-
-if [[ $? -eq 0 ]] && [[ -s $recalioutbam ]];
-	then
-		rm $realignmentfixbam \
-        	$realignmentlist \
-        	$baserecaldata
-		find Alignment/ -name "*$Sample*" ! -name "*recalib*" -delete
-	else
-   		exit 1;
-fi
-' >> $REALIGNJOB
 
 if [[ $AUTOSTART -eq 1 ]]; then
 	echo autostarting pipeline

@@ -5,7 +5,9 @@
 ## This script creates array jobs that can be submitted to the Sun Grid Engine on Apocrita
 ## This script has been written by Findlay Bewicke-Copley August 2018
 
-SuppScirptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"/SupplementaryScripts/
+
+ArrayScriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+SuppScirptDir=$ArrayScriptDir/SupplementaryScripts/
 today=`date +%Y-%m-%d`
 DIR=$PWD
 jobName=UMI-VCF-$(basename $DIR)
@@ -17,10 +19,6 @@ REF=GRCh37
 ## Job Constants
 fastqSuffix=.fastq.gz
 SETUP=0
-
-##Software
-GATK=/data/home/$USER/Software/GenomeAnalysisTK.jar
-PICARD=/data/home/$USER/Software/picard.jar
 
 AUTOSTART=0
 
@@ -92,92 +90,16 @@ dbsnp=$( ls $REFDIR/*no_M.vcf )
 # Job script files
 #jobOutputDir=/data/scratch/$USER/
 jobOutputDir=/data/scratch/$USER/
-realignJob=$jobName\.01.realign.$today\.sh
+realignJob=$jobName\.01.PostProcessing.$today\.sh
 varScanJob=$jobName\.02.varScan.$today\.sh
 varFiltJob=$jobName\.03.varFilt.$today\.sh
 
-echo "
-#!/bin/sh
-#$ -wd $DIR             # use current working directory
-#$ -o /data/scratch/$USER/
-#$ -j y                 # and put all output (inc errors) into it
-#$ -m a                 # Email on abort
-#$ -pe smp 1            # Request 1 CPU cores
-#$ -l h_rt=24:0:0        # Request 24 hour runtime (This is an overestimation probably. Alter based on your needs.) 
-#$ -l h_vmem=4G         # Request 4G RAM / Core
-#$ -t 1-$MAX            # run an array job of all the samples listed in FASTQ_Raw
-#$ -N $jobName-Realign_Job
 
-GATK=$GATK
-PICARD=$PICARD
-SuppScirptDir=$SuppScirptDir
 
-reference=$reference
-referenceindex=$refIndex
-dbsnp=$dbsnp
-BED=$BED" > $realignJob
-
-echo '
-module load java
-
-Samples=(ls Alignment/*.bam)
-## Extract the file name at the position of the array job task ID
-Sample=$(basename ${Samples[${SGE_TASK_ID}]})
-echo $Sample
-
-consensusbam=Alignment/$Sample\.con.bam
-realignmentlist=Alignment/$Sample\.bam.list
-realignmentbam=Alignment/$Sample\.realigned.bam
-realignmentfixbam=Alignment/$Sample\.fixed.bam
-baserecaldata=Alignment/$Sample\.recal_data.grp
-recalioutbam=Alignment/$Sample\.recalib.bam
-
-## local alignment around indels
-echo "####MESS Step 4: local alignment around indels"
-echo "####MESS Step 4: first create a table of possible indels"
-java -Xmx4g -jar $GATK -T RealignerTargetCreator \
-	-R $reference \
-	-o $realignmentlist \
-	-I $consensusbam
-if ! [[ $? -eq 0 ]]; then exit 1; fi
-echo "####MESS Step 4: realign reads around those targets"
-java -Xmx4g -Djava.io.tmpdir=/tmp -jar $GATK \
-	-I $consensusbam \
-	-R $reference \
-	-T IndelRealigner \
-	-targetIntervals $realignmentlist \
-	-o $realignmentbam
-if ! [[ $? -eq 0 ]]; then exit 1; fi
-echo "####MESS Step 4: fix paired end mate information using Picard"
-java -Djava.io.tmpdir=/tmp -jar $PICARD FixMateInformation \
-	INPUT=$realignmentbam \
-	OUTPUT=$realignmentfixbam \
-	SO=coordinate \
-	VALIDATION_STRINGENCY=LENIENT \
-	CREATE_INDEX=true
-date
-if ! [[ $? -eq 0 ]]; then exit 1; fi
-## base quality score recalibration
-echo "####MESS Step 5: base quality score recalibration"
-java -Xmx4g -jar $GATK -T BaseRecalibrator \
-	-I $realignmentfixbam \
-	-R $reference \
-	-knownSites $dbsnp \
-	-o $baserecaldata
-if ! [[ $? -eq 0 ]]; then exit 1; fi
-echo "####MESS Step 5: print recalibrated reads into BAM"
-java -jar $GATK -T PrintReads \
-	-R $reference \
-	-I $realignmentfixbam \
-	-BQSR $baserecaldata \
-	-o $recalioutbam
-date
-
-if ! [[ $? -eq 0 ]]; then exit 1; fi
-
-$SuppScirptDir/get_coverage_targeted_regions.sh $BED
-perl $SuppScirptDir/get_coverage_info.pl $BED
-' >> $realignJob
+$ArrayScriptDir/Post_Alignment_Processing.sh \
+        -n $jobName\.01 \
+        -d $DIR \
+        -r $REF
 
 echo "
 #!/bin/sh
