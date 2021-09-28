@@ -39,8 +39,6 @@ Avaliable pipelines:
 
 Software | Expected location on server
 --- | ---
-<a href="https://github.com/broadinstitute/picard/releases/tag/2.18.14">Picard tools</a> | The picard.jar file should be found in /data/home/$USER/Software
-<a href="https://software.broadinstitute.org/gatk/download/">Genome Analysis Toolkit</a> | symlink to latest GATK release called gatk-latest should be found in /data/home/$USER/Software. Make a symlink using ln -s /path/to/gatk gatk-latest
 <a href="https://github.com/Illumina/strelka/tree/master">Strelka</a> | Strelka root dir should be in /data/home/$USER/Software
 <a href="https://github.com/arq5x/lumpy-sv">Lumpy</a> | Lumpy root dir should be in /data/home/$USER/Software
 htseq-count | create a virtual environment in ~/envs/ called htseq-count and install htseq using pip
@@ -52,6 +50,54 @@ The rest should be handled by the modules on apocrita unless something breaks. I
 Make sure you've checked the files with fastqc etc and trimmed if needed.
 
 ***
+# Quality Control
+
+## Fastqc_array.sh
+
+Fastqc can be used to assess the quality of FASTQ, Sam and Bam files.
+
+The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files.
+
+OR
+
+if MODE is set to bam you'll need a directory called Alignment that contains bam files. (The script will analyse all these bam files.)
+
+i.e.
+
+Project root | raw | sample | .fastq.gz
+--- | --- | --- | ---
+RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
+|  |  |  | Sample1_R2.fastq.gz
+| |  | Sample2 | Sample2_R1.fastq.gz
+|  |  |  | Sample2_R2.fastq.gz
+
+Options
+
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default on)
+-n | --name                     The name for the job (default Lumpy_Array)
+-m | --mode			The mode for the job (bam|fastq) (default fastq)
+-d | --directory                The root directory for the project (default $PWD)"
+```
+
+***
+
+## Samtools_flagstat_Array.sh
+
+Flagstat reads the flags in a bam to assess the alignment.
+
+The script will find the bam files in Alignment and run flagstat on them all.
+
+Options
+
+```bash
+-n | --name                     The name for the job (default Lumpy_Array)
+-d | --directory                The root directory for the project (default $PWD)"
+```
+
+***
+
+# Align FASTQ
 
 ## BWA_Align_Array_Job_Build.sh
 
@@ -329,31 +375,3 @@ Options
 -d | --directory                The root directory for the project (default $PWD)"
 ```
 ***
-
-## Fastqc_array.sh
-
-Fastqc can be used to assess the quality of FASTQ, Sam and Bam files.
-
-The script will expect that the fastq files are stored in a directory called FASTQ_Raw. Inside of this directory should be a directory for each sample containing the sample_R[1,2].fastq.gz files.
-
-OR
-
-if MODE is set to bam you'll need a directory called Alignment that contains bam files. (The script will analyse all these bam files.)
-
-i.e.
-
-Project root | raw | sample | .fastq.gz
---- | --- | --- | ---
-RNAseq_proj | FASTQ_Raw | Sample1 | Sample1_R1.fastq.gz
-|  |  |  | Sample1_R2.fastq.gz
-| |  | Sample2 | Sample2_R1.fastq.gz
-|  |  |  | Sample2_R2.fastq.gz
-
-Options
-
-```bash
--a | --auto-start               Automatically start the jobs on creation (default on)
--n | --name                     The name for the job (default Lumpy_Array)
--m | --mode			The mode for the job (bam|fastq) (default fastq)
--d | --directory                The root directory for the project (default $PWD)"
-```
