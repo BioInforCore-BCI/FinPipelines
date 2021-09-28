@@ -5,7 +5,7 @@ Avaliable pipelines:
 ### QC
 
 1. [Fastqc_array.sh](#fastqc_arraysh)
-1. [Samtools_flagstat_Array.sh](#Samtools_flagstat_Array.sh)
+1. [Samtools_flagstat_Array.sh](#samtools_flagstat_array.sh)
 
 ### Align FASTQ
 
@@ -18,7 +18,7 @@ Avaliable pipelines:
 
 ### RNAseq
 1. [Htseq-Count_Array.sh](#htseq-count_arraysh)
-1. [FusionCatcher.sh](#fusionCatcher)
+1. [FusionCatcher.sh](#fusioncatcher.sh)
 
 ### Variant Calling
 1. [HaplotypeCaller.sh](#haplotypecallersh)
