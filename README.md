@@ -130,9 +130,7 @@ The avaliable options are as follow:
 -h | --help		Display this message"
 ```
 
-
 ***
-
 
 ## BWA_Align_Array_Job_Build.sh
 
@@ -243,6 +241,42 @@ The avaliable options are as follow:
 ```
 ***
 
+## Post_Alignment_Processing.sh
+
+This is an implementation of the GATK best practices workflow for getting a file ready for variant calling.
+
+### Prerequisites
+
+Aligned bam files stored under Alignment.
+
+known variant sites file (I use dbsnp)
+
+The avaliable options are as follow:
+
+```bash
+-n | --name		Sets the job name (default - UMI-VCF-$PWD)
+-d | --directory	Root directory for the project
+-r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default $REF )
+-h | --help		Display this message
+```
+
+***
+
+## Samtools_Index_Array.sh
+
+Does what it says in the name, will build and submit an array script that will index all bam files in Alignment/
+
+Options:
+```bash
+-n | --name			The name for the job (default BWA_Align)
+-d | --directory		The root directory for the project (default $PWD)
+-h | --help			Display this message and exit"
+```
+
+***
+
+# RNAseq
+
 ## Htseq-Count_Array.sh
 
 This will create an array job to run HTSEQ-count
@@ -261,6 +295,97 @@ The avaliable options are as follow:
 -g | --gtf			gtf file (default GRCh37/Annotation/hg38.gtf)
 -h | --help                     Display this message and exit"
 ```
+
+***
+
+# Variant Calling
+
+## HaplotypeCaller.sh
+
+This will build a varscan array job for matched tumour/normal pairs.
+
+### Prerequisites
+
+The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
+The Bam files must also be indexed.
+i.e.
+
+Patient Prefix | Sample | .suffix
+ --- | --- | ---
+Patient_1. | tumour | .bam
+Patient_1. | tumour | .bai
+Patient_2. | tumour | .bam
+Patient_2. | tumour | .bai
+
+Options avaliable:
+```bash
+-a | --auto-start		Automatically start the jobs on creation (default off)
+-n | --name			The name for the job (default BWA_Align)
+-d | --directory		The root directory for the project (default $PWD)
+-r | --refdir			Directory in BCI-Haemato/Refs containing the reference (default $REF)
+-h | --help			Display this message and exit
+```
+***
+
+## Varscan_Array.sh
+
+This will build a varscan array job for matched tumour/normal pairs.
+
+### Prerequisites
+
+The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
+The Bam files must also be indexed.
+
+i.e.
+
+Patient Prefix | Sample | .suffix
+ --- | --- | ---
+Patient_1. | tumour | .bam
+Patient_1. | tumour | .bai
+Patient_2. | tumour | .bam
+Patient_2. | tumour | .bai
+
+Options avaliable:
+```bash
+-a | --autostart	Automaticall start the jobs, holding jobs so they run in the correct order
+-n | --name		Sets the job name (default - UMI-VCF-$PWD)
+-b | --bed		Bed file for the project (default none - change this!)
+-d | --directory	Root directory for the project
+-r | --ref 		Reference directory for the project, look for this in BCI-Haemato/Refs (default GRCh37)
+-s | --setup 		Run the set up (cat the files together and create sample directories) (default off)
+-f | --fastq-suffix 	Suffix for the fastq files (default .fastq.gz)
+-h | --help		Display this message
+```
+
+***
+
+## Strelka_Germline_Array.sh
+
+This will build a strelka array job for germline samples.
+
+### Prerequisites
+
+The bam files to be used must be in the same directory called .../Project_Root/Alignment/.
+The Bam files must also be indexed.
+
+i.e.
+
+Patient Prefix | Sample | .suffix
+ --- | --- | ---
+Patient_1. | normal | .bam
+Patient_1. | normal | .bai
+Patient_2. | normal | .bam
+Patient_2. | normal | .bai
+
+Options avaliable:
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default off)
+-n | --name                     The name for the job (default BWA_Align)
+-d | --directory                The root directory for the project (default $PWD)
+-r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
+-h | --help                     Display this message and exit"
+```
+
 
 ***
 
@@ -297,6 +422,7 @@ Options avaliable:
 -r | --refdir                   Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help                     Display this message and exit"
 ```
+
 ***
 ## MuTect2_Array.sh
 
@@ -324,13 +450,45 @@ Patient_2. | tumour | .bam
 Patient_2. | tumour | .bai
 
 Options avaliable:
+```bash
 -a | --auto-start		Automatically start the jobs on creation (default off)
 -n | --name			The name for the job (default BWA_Align)
 -d | --directory		The root directory for the project (default $PWD)
 -r | --refdir			Directory in BCI-Haemato/Refs containing the reference (default GRCh37/)
 -h | --help			Display this message and exit
+```
+***
+
+# Structural Variant Calling
+
+## Lumpy-VCF_Array_Build.sh
+
+Lumpy is a structural variant caller.
+
+DIR should be the root of the project which needs to contain a folder called Alignment.
+In this folder you should have bam files for your samples with the suffix .recalib.bam. These will used to call the SVs.
+
+You need an output folder called VCF/SV/ as this is where the VCF files will be placed.
+
+Options
+
+```bash
+-a | --auto-start               Automatically start the jobs on creation (default on)
+-n | --name                     The name for the job (default Lumpy_Array)
+-d | --directory                The root directory for the project (default $PWD)"
+```
+***
+
+# CNA Calling
+
+## Seqz_Array.sh
+
+TODO replace with seqz-utils version
 
 ***
+
+# Misc
+
 ## Polysolver_Array.sh
 
 ### Prerequisites
@@ -382,32 +540,4 @@ Options:
 -r | --ref			The reference used to align the bam (default hg19)
 ```
 
-***
-## Samtools_Index_Array.sh
-
-Does what it says in the name, will build and submit an array script that will index all bam files in Alignment/
-
-Options:
-```bash
--n | --name			The name for the job (default BWA_Align)
--d | --directory		The root directory for the project (default $PWD)
--h | --help			Display this message and exit"
-```
-***
-## Lumpy-VCF_Array_Build.sh
-
-Lumpy is a structural variant caller.
-
-DIR should be the root of the project which needs to contain a folder called Alignment.
-In this folder you should have bam files for your samples with the suffix .recalib.bam. These will used to call the SVs.
-
-You need an output folder called VCF/SV/ as this is where the VCF files will be placed.
-
-Options
-
-```bash
--a | --auto-start               Automatically start the jobs on creation (default on)
--n | --name                     The name for the job (default Lumpy_Array)
--d | --directory                The root directory for the project (default $PWD)"
-```
 ***
