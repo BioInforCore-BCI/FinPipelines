@@ -50,6 +50,7 @@ The rest should be handled by the modules on apocrita unless something breaks. I
 Make sure you've checked the files with fastqc etc and trimmed if needed.
 
 ***
+
 # Quality Control
 
 ## Fastqc_array.sh
