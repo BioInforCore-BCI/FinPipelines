@@ -25,7 +25,6 @@ Avaliable pipelines:
 1. [Strelka_Germline_Array.sh](#strelka_germline_arraysh)
 1. [Strelka_Somatic_Array.sh](#strelka_somatic_arraysh)
 1. [MuTect2_Array.sh](#mutect2_arraysh)
-1. [Polysolver_Array.sh](#polysolver_arraysh)
 
 #### Structural Variant Calling
 1. [Lumpy-VCF_Array_Build.sh](#lumpy-vcf_array_buildsh)
@@ -33,8 +32,8 @@ Avaliable pipelines:
 #### CNA calling
 1. [Seqz_Array.sh](#seqz_arraysh)
 
-
-
+### Misc
+1. [Polysolver_Array.sh](#polysolver_arraysh)
 
 ## Prerequisites
 
